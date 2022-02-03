@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 const PORT = "4000"
@@ -19,7 +21,14 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 // shows an example snippet
 func showSnippet(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("This is an example snippet."))
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+
+	if err != nil || id < 0 {
+		http.NotFound(w, r)
+		return
+	}
+
+	fmt.Fprintf(w, "Displaying snippet %d", id)
 }
 
 // allows user to create a snippet
