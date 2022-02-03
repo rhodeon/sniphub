@@ -13,7 +13,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("Welcome to Texthub."))
+	w.Write([]byte("Welcome to Sniphub."))
 }
 
 // shows an example snippet

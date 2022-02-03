@@ -1,3 +1,3 @@
-module github.com/rhodeon/texthub
+module github.com/rhodeon/sniphub
 
 go 1.17
