@@ -9,16 +9,27 @@ const PORT = "4000"
 
 // default home response
 func home(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
+
 	w.Write([]byte("Welcome to Texthub."))
 }
 
 // shows an example snippet
-func showSnippet(w http.ResponseWriter, r *http.Request)  {
+func showSnippet(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("This is an example snippet."))
 }
 
 // allows user to create a snippet
 func createSnippet(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		http.Error(w, "Method not allowed.", http.StatusMethodNotAllowed)
+		return
+	}
+
 	w.Write([]byte("You can create a snippet here."))
 }
 
