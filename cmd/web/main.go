@@ -20,5 +20,5 @@ func setupHandlers(mux *http.ServeMux) {
 	mux.HandleFunc(homeRoute, home)
 	mux.HandleFunc(showSnippetRoute, showSnippet)
 	mux.HandleFunc(createSnippetRoute, createSnippet)
-	mux.Handle(staticRoute, http.StripPrefix(staticRoute, fileServer))
+	mux.HandleFunc(staticRoute, serveStaticFiles)
 }
