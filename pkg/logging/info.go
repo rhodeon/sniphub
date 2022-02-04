@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	colors "github.com/rhodeon/sniphub/pkg/color"
+	"github.com/rhodeon/sniphub/pkg/colors"
 )
 
 // Logger which prints message to standard output.
