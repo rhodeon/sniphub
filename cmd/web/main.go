@@ -4,7 +4,7 @@ import (
 	"flag"
 	"net/http"
 
-	"github.com/rhodeon/sniphub/pkg/logging"
+	"github.com/rhodeon/sniphub/pkg/prettylog"
 )
 
 const PORT = "4000"
@@ -16,9 +16,9 @@ func main() {
 	mux := http.NewServeMux()
 	setupHandlers(mux)
 
-	logging.InfoF("Starting server on %s", *addr)
+	prettylog.InfoF("Starting server on %s", *addr)
 	err := http.ListenAndServe(*addr, mux)
-	logging.Error(err.Error())
+	prettylog.Error(err.Error())
 }
 
 func setupHandlers(mux *http.ServeMux) {

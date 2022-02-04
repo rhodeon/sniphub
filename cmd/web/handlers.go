@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/rhodeon/sniphub/pkg/logging"
+	"github.com/rhodeon/sniphub/pkg/prettylog"
 )
 
 // default home response
@@ -24,14 +24,14 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 	tmpl, err := template.ParseFiles(files...)
 	if err != nil {
-		logging.Error(err.Error())
+		prettylog.Error(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	err = tmpl.Execute(w, nil)
 	if err != nil {
-		logging.Error(err.Error())
+		prettylog.Error(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
