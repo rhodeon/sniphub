@@ -8,6 +8,9 @@ import (
 	"strconv"
 )
 
+// serves static files
+var fileServer = http.FileServer(http.Dir("./ui/static/"))
+
 // default home response
 func home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
