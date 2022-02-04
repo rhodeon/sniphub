@@ -5,8 +5,6 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
-
-	"github.com/rhodeon/sniphub/pkg/prettylog"
 )
 
 // default home response
@@ -24,15 +22,13 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 	tmpl, err := template.ParseFiles(files...)
 	if err != nil {
-		prettylog.Error(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		serverError(w, err)
 		return
 	}
 
 	err = tmpl.Execute(w, nil)
 	if err != nil {
-		prettylog.Error(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		serverError(w, err)
 		return
 	}
 }
@@ -42,7 +38,7 @@ func showSnippet(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 
 	if err != nil || id < 0 {
-		http.NotFound(w, r)
+		notFoundError(w)
 		return
 	}
 
@@ -53,7 +49,7 @@ func showSnippet(w http.ResponseWriter, r *http.Request) {
 func createSnippet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
-		http.Error(w, "Method not allowed.", http.StatusMethodNotAllowed)
+		clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
 
