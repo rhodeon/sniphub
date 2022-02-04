@@ -13,17 +13,9 @@ func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
 	flag.Parse()
 
-	mux := http.NewServeMux()
-	setupHandlers(mux)
+	app := application{}
 
 	prettylog.InfoF("Starting server on %s", *addr)
-	err := http.ListenAndServe(*addr, mux)
+	err := http.ListenAndServe(*addr, app.routesHandler())
 	prettylog.Error(err.Error())
-}
-
-func setupHandlers(mux *http.ServeMux) {
-	mux.HandleFunc(homeRoute, home)
-	mux.HandleFunc(showSnippetRoute, showSnippet)
-	mux.HandleFunc(createSnippetRoute, createSnippet)
-	mux.HandleFunc(staticRoute, serveStaticFiles)
 }
