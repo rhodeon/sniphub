@@ -2,8 +2,9 @@ package main
 
 import (
 	"flag"
-	"log"
 	"net/http"
+
+	"github.com/rhodeon/sniphub/pkg/logging"
 )
 
 const PORT = "4000"
@@ -15,9 +16,9 @@ func main() {
 	mux := http.NewServeMux()
 	setupHandlers(mux)
 
-	log.Println("Starting server on", *addr)
+	logging.InfoF("Starting server on %s", *addr)
 	err := http.ListenAndServe(*addr, mux)
-	log.Fatal(err)
+	logging.Error(err.Error())
 }
 
 func setupHandlers(mux *http.ServeMux) {

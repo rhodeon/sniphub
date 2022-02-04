@@ -3,9 +3,10 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/rhodeon/sniphub/pkg/logging"
 )
 
 // default home response
@@ -23,14 +24,14 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 	tmpl, err := template.ParseFiles(files...)
 	if err != nil {
-		log.Println(err.Error())
+		logging.Error(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	err = tmpl.Execute(w, nil)
 	if err != nil {
-		log.Println(err.Error())
+		logging.Error(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
