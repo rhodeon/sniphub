@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/rhodeon/sniphub/pkg/models/mysql"
 	"github.com/rhodeon/sniphub/pkg/prettylog"
 )
 
@@ -17,8 +18,6 @@ func main() {
 	sqlPass := flag.String("sqlPass", "password", "SQL database password")
 	flag.Parse()
 
-	app := application{}
-
 	// initiate database connection
 	dsn := *sqlUser + ":" + *sqlPass + "@/" + *sqlDb + "?parseTime=true"
 	db, err := openDb(dsn)
@@ -26,6 +25,10 @@ func main() {
 		prettylog.FatalError(err.Error())
 	}
 	defer db.Close()
+
+	app := application{
+		snips: &mysql.SnipController{Db: db},
+	}
 
 	// start server
 	prettylog.InfoF("Starting server on %s", *addr)

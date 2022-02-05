@@ -1,3 +1,7 @@
 package main
 
-type application struct{}
+import "github.com/rhodeon/sniphub/pkg/models/mysql"
+
+type application struct{
+	snips *mysql.SnipController
+}
