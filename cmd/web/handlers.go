@@ -1,10 +1,13 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
+
+	"github.com/rhodeon/sniphub/pkg/models"
 )
 
 // default home response
@@ -42,7 +45,20 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "Displaying snippet %d", id)
+	// attempt to retrieve the snip and
+	snip, err := app.snips.Get(id)
+	if err != nil {
+		// return a 404 error if the id matches none in the database
+		if errors.Is(err, models.ErrNoRecord) {
+			notFoundError(w)
+		} else {
+			serverError(w, err)
+		}
+		return
+	}
+
+	// display the snip object as a plain-text string to the user
+	fmt.Fprintf(w, "%v", snip)
 }
 
 // allows user to create a snippet

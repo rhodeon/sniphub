@@ -1,12 +1,15 @@
 package models
 
 import (
+	"errors"
 	"time"
 )
 
+var ErrNoRecord = errors.New("models: no matching record found")
+
 type Snip struct {
-	id      int
-	title   string
-	content string
-	created time.Time
+	Id      int
+	Title   string
+	Content string
+	Created time.Time
 }
