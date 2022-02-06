@@ -36,8 +36,8 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// shows an example snippet
-func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
+// displays an example snippet
+func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 
 	if err != nil || id < 0 {
@@ -62,7 +62,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 // allows user to create a snippet
-func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
+func (app *application) createSnip(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
 		clientError(w, http.StatusMethodNotAllowed)
@@ -80,7 +80,7 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// redirect user to view newly created snip
-	http.Redirect(w, r, fmt.Sprintf("%s?id=%d", showSnippetRoute, id), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("%s?id=%d", showSnipRoute, id), http.StatusSeeOther)
 }
 
 // serves static files
@@ -90,7 +90,7 @@ func (app *application) serveStaticFiles(w http.ResponseWriter, r *http.Request)
 }
 
 // displays latest snips
-func (app *application) showLatestSnippets(w http.ResponseWriter, r *http.Request) {
+func (app *application) showLatestSnips(w http.ResponseWriter, r *http.Request) {
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 
 	if err != nil {
