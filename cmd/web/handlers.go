@@ -88,3 +88,18 @@ func (app *application) serveStaticFiles(w http.ResponseWriter, r *http.Request)
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	http.StripPrefix(staticRoute, fileServer).ServeHTTP(w, r)
 }
+
+// displays latest snips
+func (app *application) showLatestSnippets(w http.ResponseWriter, r *http.Request) {
+	snips, err := app.snips.Latest()
+
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	// show snips as plain-text
+	for _, snip := range snips {
+		fmt.Fprintf(w, "%v\n", snip)
+	}
+}

@@ -50,7 +50,34 @@ func (c *SnipController) Get(id int) (*models.Snip, error) {
 	return snip, nil
 }
 
-// Fetches a list of latest snips from the database.
+// Fetches a list of the 10 latest snips from the database.
 func (c *SnipController) Latest() ([]*models.Snip, error) {
-	return nil, nil
+	stmt := `SELECT id, title, content FROM snips
+	ORDER by created
+	DESC LIMIT 10`
+
+	rows, err := c.Db.Query(stmt)
+	if err != nil {
+		return nil, err
+	}
+
+	// ensure close the rows are closed before the function is returned in case of an error
+	defer rows.Close()
+
+	// empty slice to hold 10 latest snips
+	snips := []*models.Snip{}
+
+	// populate snips slice with pointers of mapped snip data from the database
+	for rows.Next() {
+		snip := &models.Snip{}
+		rows.Scan(&snip.Id, &snip.Title, &snip.Content)
+		snips = append(snips, snip)
+	}
+
+	// return any error that occurred during the iteration
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return snips, nil
 }

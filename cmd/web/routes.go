@@ -7,6 +7,7 @@ const (
 	showSnippetRoute   = "/snippet/"
 	createSnippetRoute = "/snippet/create/"
 	staticRoute        = "/static/"
+	latestSnipsRoute   = "/snippet/latest"
 )
 
 func (app *application) routesHandler() *http.ServeMux {
@@ -15,5 +16,6 @@ func (app *application) routesHandler() *http.ServeMux {
 	mux.HandleFunc(showSnippetRoute, app.showSnippet)
 	mux.HandleFunc(createSnippetRoute, app.createSnippet)
 	mux.HandleFunc(staticRoute, app.serveStaticFiles)
+	mux.HandleFunc(latestSnipsRoute, app.showLatestSnippets)
 	return mux
 }
