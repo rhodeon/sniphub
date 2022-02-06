@@ -7,7 +7,7 @@ const (
 	showSnippetRoute   = "/snippet/"
 	createSnippetRoute = "/snippet/create/"
 	staticRoute        = "/static/"
-	latestSnipsRoute   = "/snippet/latest"
+	latestSnipsRoute   = "/snippet/latest/"
 )
 
 func (app *application) routesHandler() *http.ServeMux {

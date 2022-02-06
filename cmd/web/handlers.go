@@ -91,7 +91,19 @@ func (app *application) serveStaticFiles(w http.ResponseWriter, r *http.Request)
 
 // displays latest snips
 func (app *application) showLatestSnippets(w http.ResponseWriter, r *http.Request) {
-	snips, err := app.snips.Latest()
+	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+
+	if err != nil {
+		notFoundError(w)
+		return
+	}
+
+	// set a default limit of 10 if the limit query is less than 1
+	if limit < 1 {
+		limit = 10
+	}
+
+	snips, err := app.snips.Latest(limit)
 
 	if err != nil {
 		serverError(w, err)
