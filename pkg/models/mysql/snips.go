@@ -11,7 +11,20 @@ type SnipController struct {
 }
 
 func (c *SnipController) Insert(title string, content string) (int, error) {
-	return 0, nil
+	stmt := `INSERT INTO snips (title, content, created) 
+	VALUES(?, ?, UTC_TIMESTAMP)`
+
+	result, err := c.Db.Exec(stmt, title, content)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
 }
 
 func (c *SnipController) Get(id int) (*models.Snip, error) {

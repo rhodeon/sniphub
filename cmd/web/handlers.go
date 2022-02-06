@@ -53,7 +53,18 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("You can create a snippet here."))
+	// dummy data
+	title := "Someone"
+	content := "The man, the myth, the legend."
+
+	id, err := app.snips.Insert(title, content)
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	// redirect user to view newly created snip
+	http.Redirect(w, r, fmt.Sprintf("%s?id=%d", showSnippetRoute, id), http.StatusSeeOther)
 }
 
 // serves static files
