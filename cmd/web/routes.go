@@ -11,9 +11,9 @@ const (
 
 func (app *application) routesHandler() *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.HandleFunc(homeRoute, home)
-	mux.HandleFunc(showSnippetRoute, showSnippet)
-	mux.HandleFunc(createSnippetRoute, createSnippet)
-	mux.HandleFunc(staticRoute, serveStaticFiles)
+	mux.HandleFunc(homeRoute, app.home)
+	mux.HandleFunc(showSnippetRoute, app.showSnippet)
+	mux.HandleFunc(createSnippetRoute, app.createSnippet)
+	mux.HandleFunc(staticRoute, app.serveStaticFiles)
 	return mux
 }

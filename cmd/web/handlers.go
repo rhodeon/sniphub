@@ -8,7 +8,7 @@ import (
 )
 
 // default home response
-func home(w http.ResponseWriter, r *http.Request) {
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
@@ -34,7 +34,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 // shows an example snippet
-func showSnippet(w http.ResponseWriter, r *http.Request) {
+func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 
 	if err != nil || id < 0 {
@@ -46,7 +46,7 @@ func showSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 // allows user to create a snippet
-func createSnippet(w http.ResponseWriter, r *http.Request) {
+func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
 		clientError(w, http.StatusMethodNotAllowed)
@@ -57,7 +57,7 @@ func createSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 // serves static files
-func serveStaticFiles(w http.ResponseWriter, r *http.Request) {
+func (app *application) serveStaticFiles(w http.ResponseWriter, r *http.Request) {
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	http.StripPrefix(staticRoute, fileServer).ServeHTTP(w, r)
 }
