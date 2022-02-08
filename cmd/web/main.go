@@ -26,8 +26,15 @@ func main() {
 	}
 	defer db.Close()
 
+	// initialize a new template cache
+	templateCache, err := newTemplateCache("./ui/html")
+	if err != nil {
+		prettylog.FatalError(err)
+	}
+
 	app := application{
-		snips: &mysql.SnipController{Db: db},
+		snips:         &mysql.SnipController{Db: db},
+		templateCache: templateCache,
 	}
 
 	// start server

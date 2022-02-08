@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -17,26 +16,10 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"./ui/html/home.page.gohtml",
-		"./ui/html/base.layout.gohtml",
-		"./ui/html/footer.partial.gohtml",
-	}
-
-	tmpl, err := template.ParseFiles(files...)
-	if err != nil {
-		serverError(w, err)
-		return
-	}
-
-	err = tmpl.Execute(w, nil)
-	if err != nil {
-		serverError(w, err)
-		return
-	}
+	app.renderTemplate(w, r, "home.page.gohtml", nil)
 }
 
-// displays an example snippet
+// displays a specified snippet
 func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 
@@ -45,7 +28,7 @@ func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// attempt to retrieve the snip and
+	// attempt to retrieve the snip
 	snip, err := app.snips.Get(id)
 	if err != nil {
 		// return a 404 error if the id matches none in the database
@@ -57,26 +40,9 @@ func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"./ui/html/show.page.gohtml",
-		"./ui/html/base.layout.gohtml",
-		"./ui/html/footer.partial.gohtml",
-	}
-
-	tmpl, err := template.ParseFiles(files...)
-	if err != nil {
-		serverError(w, err)
-		return
-	}
-
-	// wrapper to pass into html template
+	// show specified snip
 	snipTemplate := &TemplateData{Snip: snip}
-
-	err = tmpl.Execute(w, snipTemplate)
-	if err != nil {
-		serverError(w, err)
-		return
-	}
+	app.renderTemplate(w, r, "show.page.gohtml", snipTemplate)
 }
 
 // allows user to create a snippet
@@ -121,32 +87,14 @@ func (app *application) showLatestSnips(w http.ResponseWriter, r *http.Request) 
 		limit = 10
 	}
 
+	// fetch latest snips from the database
 	snips, err := app.snips.Latest(limit)
-
 	if err != nil {
 		serverError(w, err)
 		return
 	}
 
 	// display list of latest snips
-	files := []string{
-		"./ui/html/latest.page.gohtml",
-		"./ui/html/base.layout.gohtml",
-		"./ui/html/footer.partial.gohtml",
-	}
-
-	tmpl, err := template.ParseFiles(files...)
-	if err != nil {
-		serverError(w, err)
-		return
-	}
-
-	// wrapper to pass into html template
 	snipTemplate := &TemplateData{Snips: snips}
-
-	err = tmpl.Execute(w, snipTemplate)
-	if err != nil {
-		serverError(w, err)
-		return
-	}
+	app.renderTemplate(w, r, "latest.page.gohtml", snipTemplate)
 }
