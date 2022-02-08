@@ -69,7 +69,10 @@ func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = tmpl.Execute(w, snip)
+	// wrapper to pass into html template
+	snipTemplate := &TemplateData{Snip: snip}
+
+	err = tmpl.Execute(w, snipTemplate)
 	if err != nil {
 		serverError(w, err)
 		return
