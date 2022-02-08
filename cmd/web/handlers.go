@@ -57,8 +57,23 @@ func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// display the snip object as a plain-text string to the user
-	fmt.Fprintf(w, "%v", snip)
+	files := []string{
+		"./ui/html/show.page.gohtml",
+		"./ui/html/base.layout.gohtml",
+		"./ui/html/footer.partial.gohtml",
+	}
+
+	tmpl, err := template.ParseFiles(files...)
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	err = tmpl.Execute(w, snip)
+	if err != nil {
+		serverError(w, err)
+		return
+	}
 }
 
 // allows user to create a snippet
