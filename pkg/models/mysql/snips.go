@@ -32,14 +32,14 @@ func (c *SnipController) Insert(title string, content string) (int, error) {
 
 // Fetches the snip with the specified id from the database.
 func (c *SnipController) Get(id int) (*models.Snip, error) {
-	stmt := `SELECT id, title, content FROM snips
+	stmt := `SELECT id, title, content, created FROM snips
 	WHERE id = ?`
 
 	row := c.Db.QueryRow(stmt, id)
 	snip := &models.Snip{}
 
 	// fetch and map data from database to snip instance
-	err := row.Scan(&snip.Id, &snip.Title, &snip.Content)
+	err := row.Scan(&snip.Id, &snip.Title, &snip.Content, &snip.Created)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, models.ErrNoRecord
@@ -52,7 +52,7 @@ func (c *SnipController) Get(id int) (*models.Snip, error) {
 
 // Fetches a list of the 10 latest snips from the database.
 func (c *SnipController) Latest(limit int) ([]*models.Snip, error) {
-	stmt := `SELECT id, title, content FROM snips
+	stmt := `SELECT id, title, content, created FROM snips
 	ORDER by created
 	DESC LIMIT ?`
 
@@ -70,7 +70,7 @@ func (c *SnipController) Latest(limit int) ([]*models.Snip, error) {
 	// populate snips slice with pointers of mapped snip data from the database
 	for rows.Next() {
 		snip := &models.Snip{}
-		rows.Scan(&snip.Id, &snip.Title, &snip.Content)
+		rows.Scan(&snip.Id, &snip.Title, &snip.Content, &snip.Created)
 		snips = append(snips, snip)
 	}
 
