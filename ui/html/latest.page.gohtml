@@ -1,0 +1,25 @@
+{{template "base" .}}
+
+{{define "title"}} Latest {{len .Snips}} Snips {{end}}
+
+{{define "main"}}
+    <h2>Latest Snips</h2>
+
+    {{if .Snips}}
+        {{range .Snips}}
+            <div class='snippet'>
+                <div class='metadata'> 
+                    <strong>{{.Title}}</strong> 
+                    <span>#{{.Id}}</span>
+                </div>
+                
+                <pre><code>{{.Content}}</code></pre>
+                <div class='metadata'>
+                    <time>Created: {{.Created}}</time>
+                </div>
+            </div>
+        {{end}}
+    {{else}}
+        <p>There's nothing to see here yet!</p> 
+    {{end}}
+{{end}}

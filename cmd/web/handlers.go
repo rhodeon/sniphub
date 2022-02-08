@@ -128,8 +128,25 @@ func (app *application) showLatestSnips(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// show snips as plain-text
-	for _, snip := range snips {
-		fmt.Fprintf(w, "%v\n", snip)
+	// display list of latest snips
+	files := []string{
+		"./ui/html/latest.page.gohtml",
+		"./ui/html/base.layout.gohtml",
+		"./ui/html/footer.partial.gohtml",
+	}
+
+	tmpl, err := template.ParseFiles(files...)
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	// wrapper to pass into html template
+	snipTemplate := &TemplateData{Snips: snips}
+
+	err = tmpl.Execute(w, snipTemplate)
+	if err != nil {
+		serverError(w, err)
+		return
 	}
 }
