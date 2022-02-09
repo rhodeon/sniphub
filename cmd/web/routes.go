@@ -1,6 +1,10 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/justinas/alice"
+)
 
 const (
 	homeRoute        = "/"
@@ -17,5 +21,7 @@ func (app *application) routesHandler() http.Handler {
 	mux.HandleFunc(createSnipRoute, app.createSnip)
 	mux.HandleFunc(staticRoute, app.serveStaticFiles)
 	mux.HandleFunc(latestSnipsRoute, app.showLatestSnips)
-	return recoverPanic(logRequests(secureHeaders(mux)))
+
+	middlewareChain := alice.New(recoverPanic, logRequests, secureHeaders)
+	return middlewareChain.Then(mux)
 }
