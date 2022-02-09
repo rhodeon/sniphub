@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 // Renders html template set on screen
@@ -18,7 +19,7 @@ func (app *application) renderTemplate(w http.ResponseWriter, r *http.Request, n
 	buf := new(bytes.Buffer)
 
 	// execute the template set
-	err := ts.Execute(buf, td)
+	err := ts.Execute(buf, addDefaultData(td, r))
 	if err != nil {
 		serverError(w, err)
 		return
@@ -26,4 +27,14 @@ func (app *application) renderTemplate(w http.ResponseWriter, r *http.Request, n
 
 	// without an error, transfer the buffer's data to the response writer
 	buf.WriteTo(w)
+}
+
+// Inserts default data for templates
+func addDefaultData(td *TemplateData, r *http.Request) *TemplateData {
+	if td == nil {
+		td = &TemplateData{}
+	}
+
+	td.CurrentYear = time.Now().Year()
+	return td
 }

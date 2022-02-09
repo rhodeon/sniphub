@@ -8,8 +8,9 @@ import (
 )
 
 type TemplateData struct {
-	Snip  *models.Snip
-	Snips []*models.Snip
+	CurrentYear int // to be displayed in the footer
+	Snip        *models.Snip
+	Snips       []*models.Snip
 }
 
 // Caches templates for rendering pages.
