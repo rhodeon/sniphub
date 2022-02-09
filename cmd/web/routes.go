@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/justinas/alice"
 )
 
@@ -15,13 +16,13 @@ const (
 )
 
 func (app *application) routesHandler() http.Handler {
-	mux := http.NewServeMux()
-	mux.HandleFunc(homeRoute, app.home)
-	mux.HandleFunc(showSnipRoute, app.showSnip)
-	mux.HandleFunc(createSnipRoute, app.createSnip)
-	mux.HandleFunc(staticRoute, app.serveStaticFiles)
-	mux.HandleFunc(latestSnipsRoute, app.showLatestSnips)
+	router := chi.NewRouter()
+	router.Get(homeRoute, app.home)
+	router.Get(showSnipRoute, app.showSnip)
+	router.Post(createSnipRoute, app.createSnip)
+	router.Get(staticRoute, app.serveStaticFiles)
+	router.Get(latestSnipsRoute, app.showLatestSnips)
 
 	middlewareChain := alice.New(recoverPanic, logRequests, secureHeaders)
-	return middlewareChain.Then(mux)
+	return middlewareChain.Then(router)
 }

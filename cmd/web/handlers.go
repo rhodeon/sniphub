@@ -11,11 +11,6 @@ import (
 
 // default home response
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
-
 	app.renderTemplate(w, r, "home.page.gohtml", nil)
 }
 
@@ -47,12 +42,6 @@ func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 
 // allows user to create a snippet
 func (app *application) createSnip(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", http.MethodPost)
-		clientError(w, http.StatusMethodNotAllowed)
-		return
-	}
-
 	// dummy data
 	title := "Someone"
 	content := "The man, the myth, the legend."
