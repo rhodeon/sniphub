@@ -17,5 +17,5 @@ func (app *application) routesHandler() http.Handler {
 	mux.HandleFunc(createSnipRoute, app.createSnip)
 	mux.HandleFunc(staticRoute, app.serveStaticFiles)
 	mux.HandleFunc(latestSnipsRoute, app.showLatestSnips)
-	return logRequests(secureHeaders(mux))
+	return recoverPanic(logRequests(secureHeaders(mux)))
 }
