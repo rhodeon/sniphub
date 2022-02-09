@@ -3,6 +3,7 @@ package main
 import (
 	"html/template"
 	"path/filepath"
+	"time"
 
 	"github.com/rhodeon/sniphub/pkg/models"
 )
@@ -11,6 +12,10 @@ type TemplateData struct {
 	CurrentYear int // to be displayed in the footer
 	Snip        *models.Snip
 	Snips       []*models.Snip
+}
+
+var templateFunctions = template.FuncMap{
+	"formattedDate": formattedDate,
 }
 
 // Caches templates for rendering pages.
@@ -26,8 +31,11 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 
 	// process each page file
 	for _, page := range pages {
+		name := filepath.Base(page)
+
+		// associate the template function map with the template set
 		// parse the page template file to a template set
-		ts, err := template.ParseFiles(page)
+		ts, err := template.New(name).Funcs(templateFunctions).ParseFiles(page)
 		if err != nil {
 			return nil, err
 		}
@@ -45,9 +53,13 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 		}
 
 		// save the template set for each page in the cache
-		name := filepath.Base(page)
 		cache[name] = ts
 	}
 
 	return cache, err
+}
+
+// Formats time to a more readable look.
+func formattedDate(t time.Time) string {
+	return t.Format("Jan 02th, 2006 at 15:04")
 }
