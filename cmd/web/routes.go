@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/justinas/alice"
 )
 
 const (
@@ -17,12 +16,16 @@ const (
 
 func (app *application) routesHandler() http.Handler {
 	router := chi.NewRouter()
+
+	// set middleware
+	router.Use(recoverPanic, logRequests, secureHeaders)
+
+	// set route handlers
 	router.Get(homeRoute, app.home)
 	router.Get(showSnipRoute, app.showSnip)
 	router.Post(createSnipRoute, app.createSnip)
 	router.Get(staticRoute, app.serveStaticFiles)
 	router.Get(latestSnipsRoute, app.showLatestSnips)
 
-	middlewareChain := alice.New(recoverPanic, logRequests, secureHeaders)
-	return middlewareChain.Then(router)
+	return router
 }
