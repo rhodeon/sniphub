@@ -4,14 +4,15 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 const (
 	homeRoute        = "/"
-	showSnipRoute    = "/snip/"
-	createSnipRoute  = "/snip/create/"
+	showSnipRoute    = "/snip"
+	createSnipRoute  = "/snip/create"
 	staticRoute      = "/static/*"
-	latestSnipsRoute = "/snip/latest/"
+	latestSnipsRoute = "/latest"
 )
 
 func (app *application) routesHandler() http.Handler {
@@ -19,13 +20,17 @@ func (app *application) routesHandler() http.Handler {
 
 	// set middleware
 	router.Use(recoverPanic, logRequests, secureHeaders)
+	router.Use(middleware.CleanPath, middleware.StripSlashes)
 
 	// set route handlers
-	router.Get(homeRoute, app.home)
-	router.Get(showSnipRoute, app.showSnip)
-	router.Post(createSnipRoute, app.createSnip)
-	router.Get(staticRoute, app.serveStaticFiles)
-	router.Get(latestSnipsRoute, app.showLatestSnips)
+	router.Get("/", app.home)
+	router.Get("/static/*", app.serveStaticFiles)
+	router.Get("/latest", app.showLatestSnips)
+
+	router.Route("/snip", func(r chi.Router) {
+		r.Get("/{id:[0-9]+}", app.showSnip)
+		r.Put("/create", app.createSnip)
+	})
 
 	return router
 }

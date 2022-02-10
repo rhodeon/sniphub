@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/rhodeon/sniphub/pkg/models"
 )
 
@@ -16,8 +17,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 // displays a specified snippet
 func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
-
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil || id < 0 {
 		notFoundError(w)
 		return
@@ -65,7 +65,6 @@ func (app *application) serveStaticFiles(w http.ResponseWriter, r *http.Request)
 // displays latest snips
 func (app *application) showLatestSnips(w http.ResponseWriter, r *http.Request) {
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
-
 	if err != nil {
 		notFoundError(w)
 		return
