@@ -53,7 +53,7 @@ func (app *application) createSnip(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// redirect user to view newly created snip
-	http.Redirect(w, r, fmt.Sprintf("%s?id=%d", showSnipRoute, id), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("%s/%d", showSnipRoute, id), http.StatusSeeOther)
 }
 
 // serves static files
