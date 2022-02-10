@@ -59,7 +59,7 @@ func (app *application) createSnip(w http.ResponseWriter, r *http.Request) {
 // serves static files
 func (app *application) serveStaticFiles(w http.ResponseWriter, r *http.Request) {
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
-	http.StripPrefix(staticRoute, fileServer).ServeHTTP(w, r)
+	http.StripPrefix("/static/", fileServer).ServeHTTP(w, r)
 }
 
 // displays latest snips

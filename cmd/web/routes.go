@@ -10,7 +10,7 @@ const (
 	homeRoute        = "/"
 	showSnipRoute    = "/snip/"
 	createSnipRoute  = "/snip/create/"
-	staticRoute      = "/static/"
+	staticRoute      = "/static/*"
 	latestSnipsRoute = "/snip/latest/"
 )
 
