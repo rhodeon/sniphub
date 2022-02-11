@@ -40,8 +40,13 @@ func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 	app.renderTemplate(w, r, "show.page.gohtml", snipTemplate)
 }
 
+// displays snip creation form
+func (app *application) createSnipGet(w http.ResponseWriter, r *http.Request) {
+	app.renderTemplate(w, r, "create.page.gohtml", nil)
+}
+
 // allows user to create a snippet
-func (app *application) createSnip(w http.ResponseWriter, r *http.Request) {
+func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 	// dummy data
 	title := "Someone"
 	content := "The man, the myth, the legend."

@@ -1,0 +1,19 @@
+{{template "base" .}}
+
+{{define "title"}} Create a New Snip {{end}}
+
+{{define "main"}}
+<form action='/snip/create' method='POST'>
+    <div>
+        <label>Title:</label>
+        <input type='text' name='title'>
+    </div>
+    <div>
+        <label>Content:</label>
+        <textarea name='content'></textarea>
+    </div>
+    <div>
+        <input type='submit' value='Publish Snip'>
+    </div>
+</form>
+{{end}}
