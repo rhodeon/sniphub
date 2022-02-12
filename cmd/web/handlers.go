@@ -45,12 +45,19 @@ func (app *application) createSnipGet(w http.ResponseWriter, r *http.Request) {
 	app.renderTemplate(w, r, "create.page.gohtml", nil)
 }
 
-// allows user to create a snippet
+// create snip from submitted form and
+// redirect user to view the newly created snip
 func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
-	// dummy data
-	title := "Someone"
-	content := "The man, the myth, the legend."
+	// verify form's content
+	err := r.ParseForm()
+	if err != nil {
+		clientError(w, http.StatusBadRequest)
+	}
 
+	title := r.PostForm.Get("title")
+	content := r.PostForm.Get("content")
+
+	// save the snip in the database
 	id, err := app.snips.Insert(title, content)
 	if err != nil {
 		serverError(w, err)

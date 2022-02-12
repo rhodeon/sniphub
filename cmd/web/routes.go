@@ -30,6 +30,7 @@ func (app *application) routesHandler() http.Handler {
 	router.Route("/snip", func(r chi.Router) {
 		r.Get("/{id:[0-9]+}", app.showSnip)
 		r.Get("/create", app.createSnipGet)
+		r.Post("/create", app.createSnipPost)
 	})
 
 	return router
