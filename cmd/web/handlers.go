@@ -12,12 +12,12 @@ import (
 	"github.com/rhodeon/sniphub/pkg/models"
 )
 
-// default home response
+// Default home response
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.renderTemplate(w, r, "home.page.gohtml", nil)
 }
 
-// displays a specified snippet
+// Displays a specified snippet
 func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil || id < 0 {
@@ -42,13 +42,14 @@ func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 	app.renderTemplate(w, r, "show.page.gohtml", snipTemplate)
 }
 
-// displays snip creation form
+// Displays snip creation form
 func (app *application) createSnipGet(w http.ResponseWriter, r *http.Request) {
 	app.renderTemplate(w, r, "create.page.gohtml", nil)
 }
 
-// create snip from submitted form and
-// redirect user to view the newly created snip
+// Creates snip from submitted form and
+// Redirect user to view the newly created snip.
+// Returns to the creation form on error.
 func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 	// verify form's content
 	err := r.ParseForm()
@@ -73,8 +74,16 @@ func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 		errors["content"] = "Content must not be empty"
 	}
 
+	// redirect to the creation form on error
 	if len(errors) > 0 {
-		fmt.Fprint(w, errors)
+		app.renderTemplate(
+			w, r,
+			"create.page.gohtml",
+			&TemplateData{
+				FormData:   r.PostForm,
+				FormErrors: errors,
+			},
+		)
 		return
 	}
 
@@ -89,14 +98,14 @@ func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("%s/%d", showSnipRoute, id), http.StatusSeeOther)
 }
 
-// serves static files
+// Serves static files
 func (app *application) serveStaticFiles(w http.ResponseWriter, r *http.Request) {
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	http.StripPrefix("/static/", fileServer).ServeHTTP(w, r)
 }
 
-// displays latest snips
-// default limit of 10 if the limit query is less than 1 or nonexistent/malformed
+// Displays latest snips.
+// Default limit of 10 if the limit query is less than 1 or nonexistent/malformed.
 func (app *application) showLatestSnips(w http.ResponseWriter, r *http.Request) {
 	limitParam := r.URL.Query().Get("limit")
 

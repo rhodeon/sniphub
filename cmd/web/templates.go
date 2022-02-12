@@ -2,6 +2,7 @@ package main
 
 import (
 	"html/template"
+	"net/url"
 	"path/filepath"
 	"time"
 
@@ -10,8 +11,14 @@ import (
 
 type TemplateData struct {
 	CurrentYear int // to be displayed in the footer
-	Snip        *models.Snip
-	Snips       []*models.Snip
+
+	// snip data from database
+	Snip  *models.Snip
+	Snips []*models.Snip
+
+	// data from creation from
+	FormData   url.Values
+	FormErrors map[string]string
 }
 
 var templateFunctions = template.FuncMap{

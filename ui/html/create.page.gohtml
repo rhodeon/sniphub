@@ -6,11 +6,19 @@
 <form action='/snip/create' method='POST'>
     <div>
         <label>Title:</label>
-        <input type='text' name='title'>
+        <input type='text' name='title' value='{{.FormData.Get "title"}}'>
+
+        {{with .FormErrors.title}}
+        <label class='error'>{{.}}</label>
+        {{end}}
     </div>
     <div>
         <label>Content:</label>
-        <textarea name='content'></textarea>
+        <textarea name='content'>{{.FormData.Get "content"}}</textarea>
+        
+        {{with .FormErrors.content}}
+        <label class='error'>{{.}}</label>
+        {{end}}
     </div>
     <div>
         <input type='submit' value='Publish Snip'>
