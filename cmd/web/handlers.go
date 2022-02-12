@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
+	"unicode/utf8"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/rhodeon/sniphub/pkg/models"
@@ -56,6 +58,25 @@ func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 
 	title := r.PostForm.Get("title")
 	content := r.PostForm.Get("content")
+
+	errors := make(map[string]string)
+
+	// validate title
+	if strings.TrimSpace(title) == "" {
+		errors["title"] = "Title must not be empty"
+	} else if utf8.RuneCountInString(title) > 100 {
+		errors["title"] = "Title must not have over 100 characters"
+	}
+
+	// validate content
+	if strings.TrimSpace(content) == "" {
+		errors["content"] = "Content must not be empty"
+	}
+
+	if len(errors) > 0 {
+		fmt.Fprint(w, errors)
+		return
+	}
 
 	// save the snip in the database
 	id, err := app.snips.Insert(title, content)
