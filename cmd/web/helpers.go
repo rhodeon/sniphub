@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/rhodeon/sniphub/pkg/session"
 )
 
 // Renders html template set on screen
@@ -19,7 +21,7 @@ func (app *application) renderTemplate(w http.ResponseWriter, r *http.Request, n
 	buf := new(bytes.Buffer)
 
 	// execute the template set
-	err := ts.Execute(buf, addDefaultData(td, r))
+	err := ts.Execute(buf, app.addDefaultData(td, r))
 	if err != nil {
 		serverError(w, err)
 		return
@@ -30,11 +32,12 @@ func (app *application) renderTemplate(w http.ResponseWriter, r *http.Request, n
 }
 
 // Inserts default data for templates
-func addDefaultData(td *TemplateData, r *http.Request) *TemplateData {
+func (app *application) addDefaultData(td *TemplateData, r *http.Request) *TemplateData {
 	if td == nil {
 		td = &TemplateData{}
 	}
 
 	td.CurrentYear = time.Now().Year()
+	td.FlashMessage = app.sessionManager.PopString(r.Context(), session.KeyFlashMessage)
 	return td
 }

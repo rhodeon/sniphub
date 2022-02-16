@@ -38,11 +38,7 @@ func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// show confirmation flash and specified snip
-	flashMessage := app.sessionManager.PopString(r.Context(), session.KeyFlashMessage)
-	snipTemplate := &TemplateData{
-		Snip:         snip,
-		FlashMessage: flashMessage,
-	}
+	snipTemplate := &TemplateData{Snip: snip}
 	app.renderTemplate(w, r, "show.page.gohtml", snipTemplate)
 }
 
