@@ -58,8 +58,8 @@ func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 
 	// validate title and content
 	form := forms.New(r.PostForm)
-	form.Required("title", "content")
-	form.MaxLength(100, "title")
+	form.Required(forms.Title, forms.Content)
+	form.MaxLength(100, forms.Title)
 
 	// redirect to the creation form on error
 	if !form.Valid() {
@@ -74,7 +74,10 @@ func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// save the snip in the database
-	id, err := app.snips.Insert(form.Values.Get("title"), form.Values.Get("content"))
+	id, err := app.snips.Insert(
+		form.Values.Get(forms.Title),
+		form.Values.Get(forms.Content),
+	)
 	if err != nil {
 		serverError(w, err)
 		return
