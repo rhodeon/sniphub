@@ -42,9 +42,14 @@ func main() {
 		sessionManager: sessionManager,
 	}
 
+	server := &http.Server{
+		Addr:    *addr,
+		Handler: app.routesHandler(),
+	}
+
 	// start server
 	prettylog.InfoF("Starting server on %s", *addr)
-	err = http.ListenAndServe(*addr, app.routesHandler())
+	err = server.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	prettylog.Error(err.Error())
 }
 
