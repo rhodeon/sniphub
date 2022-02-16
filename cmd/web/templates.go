@@ -2,10 +2,10 @@ package main
 
 import (
 	"html/template"
-	"net/url"
 	"path/filepath"
 	"time"
 
+	"github.com/rhodeon/sniphub/pkg/forms"
 	"github.com/rhodeon/sniphub/pkg/models"
 )
 
@@ -16,9 +16,8 @@ type TemplateData struct {
 	Snip  *models.Snip
 	Snips []*models.Snip
 
-	// data from creation from
-	FormData   url.Values
-	FormErrors map[string]string
+	// data from submitted form
+	Form *forms.Form
 }
 
 var templateFunctions = template.FuncMap{

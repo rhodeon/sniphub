@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
-	"unicode/utf8"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/rhodeon/sniphub/pkg/forms"
 	"github.com/rhodeon/sniphub/pkg/models"
 )
 
@@ -44,7 +43,7 @@ func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 
 // Displays snip creation form
 func (app *application) createSnipGet(w http.ResponseWriter, r *http.Request) {
-	app.renderTemplate(w, r, "create.page.gohtml", nil)
+	app.renderTemplate(w, r, "create.page.gohtml", &TemplateData{Form: forms.New(nil)})
 }
 
 // Creates snip from submitted form and
@@ -57,38 +56,25 @@ func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 		clientError(w, http.StatusBadRequest)
 	}
 
-	title := r.PostForm.Get("title")
-	content := r.PostForm.Get("content")
-
-	errors := make(map[string]string)
-
-	// validate title
-	if strings.TrimSpace(title) == "" {
-		errors["title"] = "Title must not be empty"
-	} else if utf8.RuneCountInString(title) > 100 {
-		errors["title"] = "Title must not have over 100 characters"
-	}
-
-	// validate content
-	if strings.TrimSpace(content) == "" {
-		errors["content"] = "Content must not be empty"
-	}
+	// validate title and content
+	form := forms.New(r.PostForm)
+	form.Required("title", "content")
+	form.MaxLength(100, "title")
 
 	// redirect to the creation form on error
-	if len(errors) > 0 {
+	if !form.Valid() {
 		app.renderTemplate(
 			w, r,
 			"create.page.gohtml",
 			&TemplateData{
-				FormData:   r.PostForm,
-				FormErrors: errors,
+				Form: form,
 			},
 		)
 		return
 	}
 
 	// save the snip in the database
-	id, err := app.snips.Insert(title, content)
+	id, err := app.snips.Insert(form.Values.Get("title"), form.Values.Get("content"))
 	if err != nil {
 		serverError(w, err)
 		return

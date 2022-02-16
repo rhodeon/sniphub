@@ -4,24 +4,26 @@
 
 {{define "main"}}
 <form action='/snip/create' method='POST'>
-    <div>
-        <label>Title:</label>
-        <input type='text' name='title' value='{{.FormData.Get "title"}}'>
+    {{with .Form}}
+        <div>
+            <label>Title:</label>
+            <input type='text' name='title' value='{{.Values.Get "title"}}'>
 
-        {{with .FormErrors.title}}
-        <label class='error'>{{.}}</label>
-        {{end}}
-    </div>
-    <div>
-        <label>Content:</label>
-        <textarea name='content'>{{.FormData.Get "content"}}</textarea>
-        
-        {{with .FormErrors.content}}
-        <label class='error'>{{.}}</label>
-        {{end}}
-    </div>
-    <div>
-        <input type='submit' value='Publish Snip'>
-    </div>
+            {{with .Errors.Get "title"}}
+            <label class='error'>{{.}}</label>
+            {{end}}
+        </div>
+        <div>
+            <label>Content:</label>
+            <textarea name='content'>{{.Values.Get "content"}}</textarea>
+            
+            {{with .Errors.Get "content"}}
+            <label class='error'>{{.}}</label>
+            {{end}}
+        </div>
+        <div>
+            <input type='submit' value='Publish Snip'>
+        </div>
+    {{end}}
 </form>
 {{end}}
