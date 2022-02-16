@@ -18,6 +18,8 @@ type TemplateData struct {
 
 	// data from submitted form
 	Form *forms.Form
+
+	FlashMessage string
 }
 
 var templateFunctions = template.FuncMap{

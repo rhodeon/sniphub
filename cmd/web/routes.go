@@ -20,6 +20,7 @@ func (app *application) routesHandler() http.Handler {
 
 	// set middleware
 	router.Use(recoverPanic, logRequests, secureHeaders)
+	router.Use(app.sessionManager.LoadAndSave)
 	router.Use(middleware.CleanPath, middleware.StripSlashes)
 
 	// set route handlers

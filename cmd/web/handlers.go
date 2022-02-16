@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/rhodeon/sniphub/pkg/forms"
 	"github.com/rhodeon/sniphub/pkg/models"
+	"github.com/rhodeon/sniphub/pkg/session"
 )
 
 // Default home response
@@ -36,8 +37,12 @@ func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// show specified snip
-	snipTemplate := &TemplateData{Snip: snip}
+	// show confirmation flash and specified snip
+	flashMessage := app.sessionManager.PopString(r.Context(), session.KeyFlashMessage)
+	snipTemplate := &TemplateData{
+		Snip:         snip,
+		FlashMessage: flashMessage,
+	}
 	app.renderTemplate(w, r, "show.page.gohtml", snipTemplate)
 }
 
@@ -84,6 +89,7 @@ func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// redirect user to view newly created snip
+	app.sessionManager.Put(r.Context(), session.KeyFlashMessage, session.SnipCreated)
 	http.Redirect(w, r, fmt.Sprintf("%s/%d", showSnipRoute, id), http.StatusSeeOther)
 }
 

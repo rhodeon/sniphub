@@ -5,6 +5,7 @@ import (
 	"flag"
 	"net/http"
 
+	"github.com/alexedwards/scs/v2"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/rhodeon/sniphub/pkg/models/mysql"
 	"github.com/rhodeon/sniphub/pkg/prettylog"
@@ -32,9 +33,13 @@ func main() {
 		prettylog.FatalError(err)
 	}
 
+	// initialize session manager
+	sessionManager := scs.New()
+
 	app := application{
-		snips:         &mysql.SnipController{Db: db},
-		templateCache: templateCache,
+		snips:          &mysql.SnipController{Db: db},
+		templateCache:  templateCache,
+		sessionManager: sessionManager,
 	}
 
 	// start server
