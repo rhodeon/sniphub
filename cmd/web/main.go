@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"flag"
 	"net/http"
+	"time"
 
 	"github.com/alexedwards/scs/v2"
 	_ "github.com/go-sql-driver/mysql"
@@ -43,8 +44,11 @@ func main() {
 	}
 
 	server := &http.Server{
-		Addr:    *addr,
-		Handler: app.routesHandler(),
+		Addr:         *addr,
+		Handler:      app.routesHandler(),
+		IdleTimeout:  1 * time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 
 	// start server
