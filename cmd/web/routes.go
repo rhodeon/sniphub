@@ -34,5 +34,13 @@ func (app *application) routesHandler() http.Handler {
 		r.Post("/create", app.createSnipPost)
 	})
 
+	router.Route("/user", func(r chi.Router) {
+		r.Get("/signup", app.signupUserGet)
+		r.Post("/signup", app.signupUserPost)
+		r.Get("/login", app.loginUserGet)
+		r.Post("/login", app.loginUserPost)
+		r.Post("/logout", app.logoutUser)
+	})
+
 	return router
 }

@@ -6,11 +6,11 @@ import (
 )
 
 func (app *application) signupUserGet(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Sighup form")
+	fmt.Fprintln(w, "Signup form")
 }
 
 func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Sighup user")
+	fmt.Fprintln(w, "Signup user")
 }
 
 func (app *application) loginUserGet(w http.ResponseWriter, r *http.Request) {
