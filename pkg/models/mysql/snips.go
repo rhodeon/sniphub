@@ -11,7 +11,7 @@ type SnipController struct {
 	Db *sql.DB
 }
 
-// Inserts a new snip to the database.
+// Insert inserts a new snip to the database.
 func (c *SnipController) Insert(title string, content string) (int, error) {
 	stmt := `INSERT INTO snips (title, content, created) 
 	VALUES(?, ?, UTC_TIMESTAMP)`
@@ -30,7 +30,7 @@ func (c *SnipController) Insert(title string, content string) (int, error) {
 	return int(id), nil
 }
 
-// Fetches the snip with the specified id from the database.
+// Get fetches the snip with the specified id from the database.
 func (c *SnipController) Get(id int) (*models.Snip, error) {
 	stmt := `SELECT id, title, content, created FROM snips
 	WHERE id = ?`
@@ -50,7 +50,7 @@ func (c *SnipController) Get(id int) (*models.Snip, error) {
 	return snip, nil
 }
 
-// Fetches a list of the 10 latest snips from the database.
+// Latest fetches a list of the 10 latest snips from the database.
 func (c *SnipController) Latest(limit int) ([]*models.Snip, error) {
 	stmt := `SELECT id, title, content, created FROM snips
 	ORDER by created

@@ -38,9 +38,10 @@ func main() {
 	sessionManager := scs.New()
 
 	app := application{
-		snips:          &mysql.SnipController{Db: db},
 		templateCache:  templateCache,
 		sessionManager: sessionManager,
+		snips:          &mysql.SnipController{Db: db},
+		users:          &mysql.UserController{Db: db},
 	}
 
 	server := &http.Server{

@@ -8,7 +8,10 @@ import (
 )
 
 type application struct {
-	snips          *mysql.SnipController
 	templateCache  map[string]*template.Template
 	sessionManager *scs.SessionManager
+
+	// database controllers
+	snips *mysql.SnipController
+	users *mysql.UserController
 }
