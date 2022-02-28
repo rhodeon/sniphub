@@ -11,7 +11,30 @@ func (app *application) signupUserGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Signup user")
+	err := r.ParseForm()
+	if err != nil {
+		clientError(w, http.StatusBadRequest)
+	}
+
+	// validate name, email and password
+	form := forms.New(r.PostForm)
+	form.Required(forms.Name, forms.Email, forms.Password)
+	form.MatchesPattern(forms.Email, forms.EmailRX)
+	form.MaxLength(255, forms.Name, forms.Email)
+	form.MinLength(10, forms.Password)
+
+	if !form.Valid() {
+		app.renderTemplate(
+			w, r,
+			"signup.page.gohtml",
+			&TemplateData{
+				Form: form,
+			},
+		)
+		return
+	}
+
+	fmt.Fprintln(w, "Create a new user...")
 }
 
 func (app *application) loginUserGet(w http.ResponseWriter, r *http.Request) {
