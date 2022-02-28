@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/rhodeon/sniphub/pkg/forms"
 	"net/http"
 )
 
 func (app *application) signupUserGet(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Signup form")
+	app.renderTemplate(w, r, "signup.page.gohtml", &TemplateData{Form: forms.New(nil)})
 }
 
 func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
