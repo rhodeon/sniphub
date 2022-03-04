@@ -6,10 +6,10 @@
     <form action='/user/signup' method='POST' novalidate>
         {{with .Form}}
             <div>
-                <label>Name:</label>
-                {{with .Errors.Get "name"}}
+                <label>Username:</label>
+                {{with .Errors.Get "username"}}
                     <label class='error'>{{.}}</label> {{end}}
-                <input type='text' name='name' value='{{.Values.Get "name"}}'></div>
+                <input type='text' name='username' value='{{.Values.Get "username"}}'></div>
             <div>
                 <label>Email:</label>
                 {{with .Errors.Get "email"}}

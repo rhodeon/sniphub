@@ -16,24 +16,29 @@ type UserController struct {
 // Insert saves user credentials on account creation.
 // The credentials include username, email and hashed password.
 // The account creation date is also stored.
-func (c *UserController) Insert(name string, email string, password string) error {
+func (c *UserController) Insert(username string, email string, password string) error {
 	// hash password to save
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 	if err != nil {
 		return err
 	}
 
-	stmt := `INSERT INTO users (name, email, hashed_password, created)
+	stmt := `INSERT INTO users (username, email, hashed_password, created)
 	VALUES(?, ?, ?, UTC_TIMESTAMP)`
 
-	_, err = c.Db.Exec(stmt, name, email, hashedPassword)
+	_, err = c.Db.Exec(stmt, username, email, hashedPassword)
 	if err != nil {
 		mySqlErr := &mysql.MySQLError{}
 		if errors.As(err, &mySqlErr) {
 			// check if the error is due to a duplicate email
 			// i.e. the 'users_uc_email' constraint for unique emails is raised
-			if mySqlErr.Number == errDuplicateEntry && strings.Contains(mySqlErr.Message, "users_uc_email") {
-				return models.ErrDuplicateEmail
+			if mySqlErr.Number == errDuplicateEntry {
+				if strings.Contains(mySqlErr.Message, ConstraintUniqueUserName) {
+					return models.ErrDuplicateUsername
+				}
+				if strings.Contains(mySqlErr.Message, ConstraintUniqueEmail) {
+					return models.ErrDuplicateEmail
+				}
 			}
 		}
 		return err

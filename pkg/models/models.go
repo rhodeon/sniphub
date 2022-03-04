@@ -8,6 +8,7 @@ import (
 var (
 	ErrNoRecord           = errors.New("models: no matching record found")
 	ErrInvalidCredentials = errors.New("models: invalid credentials")
+	ErrDuplicateUsername  = errors.New("models: duplicate username")
 	ErrDuplicateEmail     = errors.New("models: duplicate email")
 )
 
@@ -20,7 +21,7 @@ type Snip struct {
 
 type User struct {
 	Id             int
-	Name           string
+	Username       string
 	Email          string // unique users_uc_email constraint
 	HashedPassword string
 	Created        time.Time

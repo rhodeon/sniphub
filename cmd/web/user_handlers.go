@@ -22,9 +22,9 @@ func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 
 	// validate name, email and password
 	form := forms.New(r.PostForm)
-	form.Required(forms.Name, forms.Email, forms.Password)
+	form.Required(forms.Username, forms.Email, forms.Password)
 	form.MatchesPattern(forms.Email, forms.EmailRX)
-	form.MaxLength(255, forms.Name, forms.Email)
+	form.MaxLength(255, forms.Username, forms.Email)
 	form.MinLength(10, forms.Password)
 
 	// reload page with existing errors
@@ -40,11 +40,23 @@ func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = app.users.Insert(
-		form.Values.Get(forms.Name),
+		form.Values.Get(forms.Username),
 		form.Values.Get(forms.Email),
 		form.Values.Get(forms.Password),
 	)
 	if err != nil {
+		// check for duplicate username
+		if errors.Is(err, models.ErrDuplicateUsername) {
+			form.Errors.Add(forms.Username, "Username is already taken")
+			app.renderTemplate(w, r,
+				"signup.page.gohtml",
+				&TemplateData{
+					Form: form,
+				},
+			)
+			return
+		}
+
 		// check for duplicate email
 		if errors.Is(err, models.ErrDuplicateEmail) {
 			form.Errors.Add(forms.Email, "Email already in use")

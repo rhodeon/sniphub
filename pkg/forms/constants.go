@@ -4,7 +4,7 @@ package forms
 const (
 	Title    = "title"
 	Content  = "content"
-	Name     = "name"
+	Username = "username"
 	Email    = "email"
 	Password = "password"
 )
