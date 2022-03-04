@@ -2,23 +2,12 @@ package main
 
 import (
 	"bytes"
-	"flag"
 	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/rhodeon/sniphub/pkg/session"
 )
-
-func parseFlags() (addr *string, sqlDb *string, sqlUser *string, sqlPassword *string) {
-	// configure flags
-	addr = flag.String("addr", ":4000", "HTTP network address")
-	sqlDb = flag.String("sqlDb", "sniphub", "SQL database name")
-	sqlUser = flag.String("sqlUser", "web", "SQL user name")
-	sqlPassword = flag.String("sqlPassword", "password", "SQL database password")
-	flag.Parse()
-	return addr, sqlDb, sqlUser, sqlPassword
-}
 
 // Renders html template set on screen
 func (app *application) renderTemplate(w http.ResponseWriter, r *http.Request, name string, td *TemplateData) {

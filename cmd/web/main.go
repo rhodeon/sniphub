@@ -12,11 +12,12 @@ import (
 )
 
 func main() {
-	// configure flags
-	addr, sqlDb, sqlUser, sqlPassword := parseFlags()
+	// configure sessionFlags
+	sessionFlags := flags{}
+	sessionFlags.parse()
 
 	// initiate database connection
-	dsn := *sqlUser + ":" + *sqlPassword + "@/" + *sqlDb + "?parseTime=true"
+	dsn := sessionFlags.sqlUser + ":" + sessionFlags.sqlPassword + "@/" + sessionFlags.sqlDb + "?parseTime=true"
 	db, err := openDb(dsn)
 	if err != nil {
 		prettylog.FatalError(err.Error())
@@ -40,7 +41,7 @@ func main() {
 	}
 
 	server := &http.Server{
-		Addr:         *addr,
+		Addr:         sessionFlags.addr,
 		Handler:      app.routesHandler(),
 		IdleTimeout:  1 * time.Minute,
 		ReadTimeout:  5 * time.Second,
@@ -48,7 +49,7 @@ func main() {
 	}
 
 	// start server
-	prettylog.InfoF("Starting server on %s", *addr)
+	prettylog.InfoF("Starting server on %s", sessionFlags.addr)
 	err = server.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	prettylog.Error(err.Error())
 }
