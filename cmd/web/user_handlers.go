@@ -79,7 +79,7 @@ func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) loginUserGet(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Login form")
+	app.renderTemplate(w, r, "login.page.gohtml", &TemplateData{Form: forms.New(nil)})
 }
 
 func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
