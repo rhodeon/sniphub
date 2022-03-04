@@ -1,8 +1,11 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/rhodeon/sniphub/pkg/forms"
+	"github.com/rhodeon/sniphub/pkg/models"
+	"github.com/rhodeon/sniphub/pkg/session"
 	"net/http"
 )
 
@@ -10,6 +13,7 @@ func (app *application) signupUserGet(w http.ResponseWriter, r *http.Request) {
 	app.renderTemplate(w, r, "signup.page.gohtml", &TemplateData{Form: forms.New(nil)})
 }
 
+// signupUserPost saves a new user account to the database.
 func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -23,6 +27,7 @@ func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 	form.MaxLength(255, forms.Name, forms.Email)
 	form.MinLength(10, forms.Password)
 
+	// reload page with existing errors
 	if !form.Valid() {
 		app.renderTemplate(
 			w, r,
@@ -34,7 +39,31 @@ func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintln(w, "Create a new user...")
+	err = app.users.Insert(
+		form.Values.Get(forms.Name),
+		form.Values.Get(forms.Email),
+		form.Values.Get(forms.Password),
+	)
+	if err != nil {
+		// check for duplicate email
+		if errors.Is(err, models.ErrDuplicateEmail) {
+			form.Errors.Add(forms.Email, "Email already in use")
+			app.renderTemplate(w, r,
+				"signup.page.gohtml",
+				&TemplateData{
+					Form: form,
+				},
+			)
+			return
+		} else {
+			serverError(w, err)
+			return
+		}
+	}
+
+	// redirect to login page
+	app.sessionManager.Put(r.Context(), session.KeyFlashMessage, session.RegistrationSuccessful)
+	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
 func (app *application) loginUserGet(w http.ResponseWriter, r *http.Request) {

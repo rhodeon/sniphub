@@ -21,7 +21,7 @@ type Snip struct {
 type User struct {
 	Id             int
 	Name           string
-	Email          string
+	Email          string // unique users_uc_email constraint
 	HashedPassword string
 	Created        time.Time
 	Active         bool
