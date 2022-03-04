@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"flag"
 	"net/http"
 	"time"
 
@@ -14,14 +13,10 @@ import (
 
 func main() {
 	// configure flags
-	addr := flag.String("addr", ":4000", "HTTP network address")
-	sqlDb := flag.String("sqlDb", "sniphub", "SQL database name")
-	sqlUser := flag.String("sqlUser", "web", "SQL user name")
-	sqlPass := flag.String("sqlPass", "password", "SQL database password")
-	flag.Parse()
+	addr, sqlDb, sqlUser, sqlPassword := parseFlags()
 
 	// initiate database connection
-	dsn := *sqlUser + ":" + *sqlPass + "@/" + *sqlDb + "?parseTime=true"
+	dsn := *sqlUser + ":" + *sqlPassword + "@/" + *sqlDb + "?parseTime=true"
 	db, err := openDb(dsn)
 	if err != nil {
 		prettylog.FatalError(err.Error())
