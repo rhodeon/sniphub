@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"github.com/rhodeon/sniphub/pkg/forms"
 	"github.com/rhodeon/sniphub/pkg/models"
 	"github.com/rhodeon/sniphub/pkg/session"
@@ -114,6 +113,9 @@ func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
+// logoutUser removes the user id session key, and redirects to the homepage.
 func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Logout user")
+	app.sessionManager.Remove(r.Context(), session.KeyUserId)
+	app.sessionManager.Put(r.Context(), session.KeyFlashMessage, session.LogoutSuccessful)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
