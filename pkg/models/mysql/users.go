@@ -46,8 +46,37 @@ func (c *UserController) Insert(username string, email string, password string) 
 	return nil
 }
 
-func (c *UserController) Authenticate() (int, error) {
-	return 0, nil
+// Authenticate verifies inputted email and password against those in the database.
+// It returns the id of a user with valid credentials.
+func (c *UserController) Authenticate(email string, password string) (int, error) {
+	// retrieve id and hashed password at row with entered email
+	stmt := "SELECT id, hashed_password FROM users WHERE email = ? AND active = TRUE"
+	row := c.Db.QueryRow(stmt, email)
+
+	var id int
+	var hashedPassword []byte
+	err := row.Scan(&id, &hashedPassword)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			// wrong email
+			return 0, models.ErrInvalidCredentials
+		} else {
+			return 0, err
+		}
+	}
+
+	// verify password
+	err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(password))
+	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			// wrong password
+			return 0, models.ErrInvalidCredentials
+		} else {
+			return 0, err
+		}
+	}
+
+	return id, nil
 }
 
 func (c *UserController) Get() (*models.User, error) {

@@ -2,6 +2,7 @@ package forms
 
 // Fields
 const (
+	Generic  = "generic"
 	Title    = "title"
 	Content  = "content"
 	Username = "username"
