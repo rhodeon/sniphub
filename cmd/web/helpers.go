@@ -39,5 +39,12 @@ func (app *application) addDefaultData(td *TemplateData, r *http.Request) *Templ
 
 	td.CurrentYear = time.Now().Year()
 	td.FlashMessage = app.sessionManager.PopString(r.Context(), session.KeyFlashMessage)
+	td.IsAuthenticated = app.isAuthenticated(r)
 	return td
+}
+
+// isAuthenticated returns true if the current request is from authenticated user,
+// otherwise it returns false.
+func (app *application) isAuthenticated(r *http.Request) bool {
+	return app.sessionManager.Exists(r.Context(), session.KeyUserId)
 }

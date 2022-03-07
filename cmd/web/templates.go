@@ -19,7 +19,8 @@ type TemplateData struct {
 	// data from submitted form
 	Form *forms.Form
 
-	FlashMessage string
+	FlashMessage    string
+	IsAuthenticated bool
 }
 
 var templateFunctions = template.FuncMap{
