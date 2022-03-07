@@ -39,7 +39,11 @@ func (app *application) routesHandler() http.Handler {
 		r.Post("/signup", app.signupUserPost)
 		r.Get("/login", app.loginUserGet)
 		r.Post("/login", app.loginUserPost)
-		r.Post("/logout", app.logoutUser)
+
+		r.Group(func(r chi.Router) {
+			r.Use(app.requireAuthentication)
+			r.Post("/logout", app.logoutUser)
+		})
 	})
 
 	return router
