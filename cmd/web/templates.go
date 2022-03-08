@@ -21,6 +21,7 @@ type TemplateData struct {
 
 	FlashMessage    string
 	IsAuthenticated bool
+	CsrfToken       string
 }
 
 var templateFunctions = template.FuncMap{

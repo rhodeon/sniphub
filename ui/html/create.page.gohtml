@@ -1,9 +1,13 @@
+{{- /*gotype: github.com/rhodeon/sniphub/cmd/web.TemplateData*/ -}}
+
 {{template "base" .}}
 
 {{define "title"}} Create a New Snip {{end}}
 
 {{define "main"}}
 <form action='/snip/create' method='POST'>
+    <input name='csrf_token' type='hidden' value='{{.CsrfToken}}'>
+
     {{with .Form}}
         <div>
             <label>Title:</label>
