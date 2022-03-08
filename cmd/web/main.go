@@ -32,6 +32,8 @@ func main() {
 
 	// initialize session manager
 	sessionManager := scs.New()
+	sessionManager.Cookie.Secure = true
+	sessionManager.Cookie.SameSite = http.SameSiteStrictMode
 
 	app := application{
 		templateCache:  templateCache,
