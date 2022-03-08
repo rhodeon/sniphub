@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/justinas/nosurf"
 	"net/http"
 
 	"github.com/rhodeon/sniphub/pkg/prettylog"
@@ -61,4 +62,17 @@ func recoverPanic(next http.Handler) http.Handler {
 			next.ServeHTTP(rw, r)
 		},
 	)
+}
+
+// noSurf is a middleware which uses a customized CSRF cookie with
+// the Secure, Path and HttpOnly flags set.
+func noSurf(next http.Handler) http.Handler {
+	csrfHandler := nosurf.New(next)
+	csrfHandler.SetBaseCookie(http.Cookie{
+		HttpOnly: true,
+		Path:     "/",
+		Secure:   true,
+	})
+
+	return csrfHandler
 }
