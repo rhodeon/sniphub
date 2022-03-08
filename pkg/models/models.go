@@ -15,6 +15,7 @@ var (
 
 type Snip struct {
 	Id      int
+	User    string
 	Title   string
 	Content string
 	Created time.Time

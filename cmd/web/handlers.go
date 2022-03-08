@@ -76,6 +76,7 @@ func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 
 	// save the snip in the database
 	id, err := app.snips.Insert(
+		app.getUserFromContext(r).Username,
 		form.Values.Get(forms.Title),
 		form.Values.Get(forms.Content),
 	)
@@ -112,7 +113,7 @@ func (app *application) showLatestSnips(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// display list of latest snips
+	// display list of the latest snips
 	snipTemplate := &TemplateData{Snips: snips}
 	app.renderTemplate(w, r, "latest.page.gohtml", snipTemplate)
 }

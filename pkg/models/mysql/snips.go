@@ -12,11 +12,11 @@ type SnipController struct {
 }
 
 // Insert inserts a new snip to the database.
-func (c *SnipController) Insert(title string, content string) (int, error) {
-	stmt := `INSERT INTO snips (title, content, created) 
-	VALUES(?, ?, UTC_TIMESTAMP)`
+func (c *SnipController) Insert(user string, title string, content string) (int, error) {
+	stmt := `INSERT INTO snips (user, title, content, created) 
+	VALUES(?, ?, ?, UTC_TIMESTAMP)`
 
-	result, err := c.Db.Exec(stmt, title, content)
+	result, err := c.Db.Exec(stmt, user, title, content)
 	if err != nil {
 		return 0, err
 	}
@@ -32,14 +32,14 @@ func (c *SnipController) Insert(title string, content string) (int, error) {
 
 // Get fetches the snip with the specified id from the database.
 func (c *SnipController) Get(id int) (models.Snip, error) {
-	stmt := `SELECT id, title, content, created FROM snips
+	stmt := `SELECT id, user, title, content, created FROM snips
 	WHERE id = ?`
 
 	row := c.Db.QueryRow(stmt, id)
 	snip := &models.Snip{}
 
 	// fetch and map data from database to snip instance
-	err := row.Scan(&snip.Id, &snip.Title, &snip.Content, &snip.Created)
+	err := row.Scan(&snip.Id, &snip.User, &snip.Title, &snip.Content, &snip.Created)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return models.Snip{}, models.ErrNoRecord
@@ -52,7 +52,7 @@ func (c *SnipController) Get(id int) (models.Snip, error) {
 
 // Latest fetches a list of the 10 latest snips from the database.
 func (c *SnipController) Latest(limit int) ([]models.Snip, error) {
-	stmt := `SELECT id, title, content, created FROM snips
+	stmt := `SELECT id, user, title, content, created FROM snips
 	ORDER by created
 	DESC LIMIT ?`
 
@@ -70,7 +70,7 @@ func (c *SnipController) Latest(limit int) ([]models.Snip, error) {
 	// populate snips slice with pointers of mapped snip data from the database
 	for rows.Next() {
 		snip := &models.Snip{}
-		_ = rows.Scan(&snip.Id, &snip.Title, &snip.Content, &snip.Created)
+		_ = rows.Scan(&snip.Id, &snip.User, &snip.Title, &snip.Content, &snip.Created)
 		snips = append(snips, snip)
 	}
 
