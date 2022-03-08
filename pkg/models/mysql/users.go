@@ -79,7 +79,7 @@ func (c *UserController) Authenticate(email string, password string) (int, error
 	return id, nil
 }
 
-// Get retrieves a user details with the specified id.`
+// Get retrieves a user details with the specified id.
 func (c *UserController) Get(id int) (models.User, error) {
 	// retrieve user details
 	stmt := `SELECT id, username, email, created, active FROM users WHERE id = ?`
@@ -97,4 +97,39 @@ func (c *UserController) Get(id int) (models.User, error) {
 	}
 
 	return *user, nil
+}
+
+// GetSnips retrieves the snips created by the specified user.
+func (c *UserController) GetSnips(username string) ([]models.Snip, error) {
+	stmt := `SELECT id, user, title, content, created FROM snips
+	WHERE user = ?
+	ORDER by created DESC`
+
+	rows, err := c.Db.Query(stmt, username)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// empty slice to hold 10 latest snips
+	var snips []*models.Snip
+
+	// populate snips slice with pointers of mapped snip data from the database
+	for rows.Next() {
+		snip := &models.Snip{}
+		_ = rows.Scan(&snip.Id, &snip.User, &snip.Title, &snip.Content, &snip.Created)
+		snips = append(snips, snip)
+	}
+
+	// return any error that occurred during the iteration
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	// create a list to hold the value of each snip pointer
+	var snipValues []models.Snip
+	for _, snip := range snips {
+		snipValues = append(snipValues, *snip)
+	}
+	return snipValues, nil
 }

@@ -28,6 +28,7 @@ func (app *application) routesHandler() http.Handler {
 	router.Get("/", app.home)
 	router.Get("/static/*", app.serveStaticFiles)
 	router.Get("/latest", app.showLatestSnips)
+	router.Get("/user/{username}", app.showUserSnips)
 
 	router.Route("/snip", func(r chi.Router) {
 		r.Get("/{id:[0-9]+}", app.showSnip)
@@ -35,7 +36,7 @@ func (app *application) routesHandler() http.Handler {
 		r.Post("/create", app.createSnipPost)
 	})
 
-	router.Route("/user", func(r chi.Router) {
+	router.Route("/auth", func(r chi.Router) {
 		r.Get("/signup", app.signupUserGet)
 		r.Post("/signup", app.signupUserPost)
 		r.Get("/login", app.loginUserGet)

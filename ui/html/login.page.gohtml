@@ -5,7 +5,7 @@
 {{define "title"}}Login{{end}}
 
 {{define "main"}}
-    <form action='/user/login' method='POST' novalidate>
+    <form action='/auth/login' method='POST' novalidate>
         <input name='csrf_token' type='hidden' value='{{.CsrfToken}}'>
 
         {{with .Form}}

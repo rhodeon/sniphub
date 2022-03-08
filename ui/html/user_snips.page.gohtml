@@ -5,10 +5,14 @@
 {{define "title"}} Latest {{len .Snips}} Snips {{end}}
 
 {{define "main"}}
-    <h2>Latest Snips</h2>
+    {{if eq .User.Username .SelectedUser.Name}}
+        <h2>Your snips</h2>
+    {{else}}
+        <h2>Snips by {{.SelectedUser.Name}}</h2>
+    {{end}}
 
-    {{if .Snips}}
-        {{range .Snips}}
+    {{if .SelectedUser.Snips}}
+        {{range .SelectedUser.Snips}}
             <div class='snippet'>
                 <div class='metadata'>
                     <strong>{{.Title}}</strong>
@@ -17,7 +21,6 @@
 
                 <pre><code>{{.Content}}</code></pre>
                 <div class='metadata'>
-                    <a href="/user/{{.User}}">{{.User}}</a>
                     <time>Created: {{formattedDate .Created}}</time>
                 </div>
             </div>

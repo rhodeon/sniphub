@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/go-chi/chi/v5"
 	"github.com/rhodeon/sniphub/pkg/forms"
 	"github.com/rhodeon/sniphub/pkg/models"
 	"github.com/rhodeon/sniphub/pkg/session"
@@ -118,4 +119,23 @@ func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
 	app.sessionManager.Remove(r.Context(), session.KeyUserId)
 	app.sessionManager.Put(r.Context(), session.KeyFlashMessage, session.LogoutSuccessful)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+// showUserSnips displays the snips for a user.
+func (app *application) showUserSnips(w http.ResponseWriter, r *http.Request) {
+	username := chi.URLParam(r, "username")
+
+	// retrieve user snips
+	snips, err := app.users.GetSnips(username)
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	user := SelectedUserTemplate{
+		Name:  username,
+		Snips: snips,
+	}
+	td := &TemplateData{SelectedUser: user}
+	app.renderTemplate(w, r, "user_snips.page.gohtml", td)
 }

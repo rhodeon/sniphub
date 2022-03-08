@@ -15,14 +15,20 @@ type TemplateData struct {
 	CsrfToken       string
 	FlashMessage    string
 	IsAuthenticated bool
+	User            models.User
 
 	// data from submitted form
 	Form *forms.Form
 
 	// data from database
-	Snip  models.Snip
+	Snip         models.Snip
+	Snips        []models.Snip
+	SelectedUser SelectedUserTemplate
+}
+
+type SelectedUserTemplate struct {
+	Name  string
 	Snips []models.Snip
-	User  models.User
 }
 
 var templateFunctions = template.FuncMap{
