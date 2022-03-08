@@ -1,8 +1,12 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"github.com/justinas/nosurf"
+	"github.com/rhodeon/sniphub/pkg/models"
+	"github.com/rhodeon/sniphub/pkg/session"
 	"net/http"
 
 	"github.com/rhodeon/sniphub/pkg/prettylog"
@@ -75,4 +79,43 @@ func noSurf(next http.Handler) http.Handler {
 	})
 
 	return csrfHandler
+}
+
+// authenticate sets the request context with a valid authentication if it comes from a valid user.
+// Otherwise, it passes on the request as-is.
+func (app application) authenticate(next http.Handler) http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			// carry on without authenticating if there is currently no user id key set
+			exists := app.sessionManager.Exists(r.Context(), session.KeyUserId)
+			if !exists {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			// attempt to fetch user details if the user id key exists
+			user, err := app.users.Get(app.sessionManager.GetInt(r.Context(), session.KeyUserId))
+			if err != nil {
+				if errors.Is(err, models.ErrInvalidUser) {
+					// remove user id key and proceed if no user is found
+					app.sessionManager.Remove(r.Context(), session.KeyUserId)
+					next.ServeHTTP(w, r)
+				} else {
+					// raise an error for any other reason
+					serverError(w, err)
+				}
+				return
+			}
+
+			// do not authenticate if the user is inactive
+			if !user.Active {
+				app.sessionManager.Remove(r.Context(), session.KeyUserId)
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			// otherwise, authenticate the current request for future handlers
+			ctx := context.WithValue(r.Context(), contextKeyIsAuthenticated, true)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
 }

@@ -48,5 +48,9 @@ func (app *application) addDefaultData(td *TemplateData, r *http.Request) *Templ
 // isAuthenticated returns true if the current request is from authenticated user,
 // otherwise it returns false.
 func (app *application) isAuthenticated(r *http.Request) bool {
-	return app.sessionManager.Exists(r.Context(), session.KeyUserId)
+	isAuthenticated, ok := r.Context().Value(contextKeyIsAuthenticated).(bool)
+	if !ok {
+		return false
+	}
+	return isAuthenticated
 }

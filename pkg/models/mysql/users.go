@@ -50,7 +50,7 @@ func (c *UserController) Insert(username string, email string, password string) 
 // It returns the id of a user with valid credentials.
 func (c *UserController) Authenticate(email string, password string) (int, error) {
 	// retrieve id and hashed password at row with entered email
-	stmt := "SELECT id, hashed_password FROM users WHERE email = ? AND active = TRUE"
+	stmt := `SELECT id, hashed_password FROM users WHERE email = ? AND active = TRUE`
 	row := c.Db.QueryRow(stmt, email)
 
 	var id int
@@ -79,6 +79,22 @@ func (c *UserController) Authenticate(email string, password string) (int, error
 	return id, nil
 }
 
-func (c *UserController) Get() (*models.User, error) {
-	return nil, nil
+// Get retrieves a user details with the specified id.`
+func (c *UserController) Get(id int) (*models.User, error) {
+	// retrieve user details
+	stmt := `SELECT id, username, email, created, active FROM users WHERE id = ?`
+	row := c.Db.QueryRow(stmt, id)
+
+	user := &models.User{}
+	err := row.Scan(&user.Id, &user.Username, &user.Email, &user.Created, &user.Active)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			// user not found
+			return nil, models.ErrInvalidUser
+		} else {
+			return nil, err
+		}
+	}
+
+	return user, nil
 }

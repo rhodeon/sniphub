@@ -22,7 +22,7 @@ func (app *application) routesHandler() http.Handler {
 	router.Use(recoverPanic, logRequests, secureHeaders)
 	router.Use(app.sessionManager.LoadAndSave)
 	router.Use(middleware.CleanPath, middleware.StripSlashes)
-	router.Use(noSurf)
+	router.Use(noSurf, app.authenticate)
 
 	// set route handlers
 	router.Get("/", app.home)
