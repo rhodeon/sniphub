@@ -116,6 +116,7 @@ func (app application) authenticate(next http.Handler) http.Handler {
 
 			// otherwise, authenticate the current request for future handlers
 			ctx := context.WithValue(r.Context(), contextKeyIsAuthenticated, true)
+			ctx = context.WithValue(ctx, contextKeyUser, user) // save user data in context
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 }

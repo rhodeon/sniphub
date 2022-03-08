@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/justinas/nosurf"
+	"github.com/rhodeon/sniphub/pkg/models"
 	"net/http"
 	"time"
 
@@ -38,10 +39,11 @@ func (app *application) addDefaultData(td *TemplateData, r *http.Request) *Templ
 		td = &TemplateData{}
 	}
 
-	td.CsrfToken = nosurf.Token(r)
 	td.CurrentYear = time.Now().Year()
 	td.FlashMessage = app.sessionManager.PopString(r.Context(), session.KeyFlashMessage)
+	td.CsrfToken = nosurf.Token(r)
 	td.IsAuthenticated = app.isAuthenticated(r)
+	td.User = app.getUserFromContext(r)
 	return td
 }
 
@@ -53,4 +55,14 @@ func (app *application) isAuthenticated(r *http.Request) bool {
 		return false
 	}
 	return isAuthenticated
+}
+
+// getUserFromContext returns the current user data stored in a request's context.
+// Returns an empty user struct on an error,
+func (app *application) getUserFromContext(r *http.Request) models.User {
+	user, ok := r.Context().Value(contextKeyUser).(models.User)
+	if !ok {
+		return models.User{}
+	}
+	return user
 }
