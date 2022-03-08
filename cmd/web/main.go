@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"github.com/alexedwards/scs/mysqlstore"
 	"net/http"
 	"time"
 
@@ -32,6 +33,7 @@ func main() {
 
 	// initialize session manager
 	sessionManager := scs.New()
+	sessionManager.Store = mysqlstore.New(db)
 	sessionManager.Cookie.Secure = true
 	sessionManager.Cookie.SameSite = http.SameSiteStrictMode
 
