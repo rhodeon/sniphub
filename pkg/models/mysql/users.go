@@ -80,7 +80,7 @@ func (c *UserController) Authenticate(email string, password string) (int, error
 }
 
 // Get retrieves a user details with the specified id.`
-func (c *UserController) Get(id int) (*models.User, error) {
+func (c *UserController) Get(id int) (models.User, error) {
 	// retrieve user details
 	stmt := `SELECT id, username, email, created, active FROM users WHERE id = ?`
 	row := c.Db.QueryRow(stmt, id)
@@ -90,11 +90,11 @@ func (c *UserController) Get(id int) (*models.User, error) {
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			// user not found
-			return nil, models.ErrInvalidUser
+			return models.User{}, models.ErrInvalidUser
 		} else {
-			return nil, err
+			return models.User{}, err
 		}
 	}
 
-	return user, nil
+	return *user, nil
 }

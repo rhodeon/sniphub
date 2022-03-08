@@ -1,27 +1,28 @@
 package main
 
 import (
+	"github.com/rhodeon/sniphub/pkg/forms"
 	"html/template"
 	"path/filepath"
 	"time"
 
-	"github.com/rhodeon/sniphub/pkg/forms"
 	"github.com/rhodeon/sniphub/pkg/models"
 )
 
 type TemplateData struct {
-	CurrentYear int // to be displayed in the footer
-
-	// snip data from database
-	Snip  *models.Snip
-	Snips []*models.Snip
+	// default data
+	CurrentYear     int
+	CsrfToken       string
+	FlashMessage    string
+	IsAuthenticated bool
 
 	// data from submitted form
 	Form *forms.Form
 
-	FlashMessage    string
-	IsAuthenticated bool
-	CsrfToken       string
+	// data from database
+	Snip  models.Snip
+	Snips []models.Snip
+	User  models.User
 }
 
 var templateFunctions = template.FuncMap{
