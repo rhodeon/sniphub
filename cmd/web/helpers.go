@@ -11,6 +11,17 @@ import (
 	"github.com/rhodeon/sniphub/pkg/session"
 )
 
+// formattedDate formats time to be more readable.
+func formattedDate(t time.Time) string {
+	// return zero-time instances as empty strings
+	if t.IsZero() {
+		return ""
+	}
+
+	// convert time to UTC before formatting
+	return t.UTC().Format("Jan 02, 2006 at 15:04")
+}
+
 // Renders html template set on screen
 func (app *application) renderTemplate(w http.ResponseWriter, r *http.Request, name string, td *TemplateData) {
 	// retrieved the cached template set from the name

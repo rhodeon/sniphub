@@ -2,11 +2,9 @@ package main
 
 import (
 	"github.com/rhodeon/sniphub/pkg/forms"
+	"github.com/rhodeon/sniphub/pkg/models"
 	"html/template"
 	"path/filepath"
-	"time"
-
-	"github.com/rhodeon/sniphub/pkg/models"
 )
 
 type TemplateData struct {
@@ -74,9 +72,4 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 	}
 
 	return cache, err
-}
-
-// Formats time to a more readable look.
-func formattedDate(t time.Time) string {
-	return t.Format("Jan 02th, 2006 at 15:04")
 }
