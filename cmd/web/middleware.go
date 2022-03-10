@@ -14,7 +14,6 @@ import (
 
 // requireAuthentication redirects a user to the login page if they aren't logged in.
 func (app *application) requireAuthentication(next http.Handler) http.Handler {
-	fmt.Println("authhhhh")
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			// if the user is not authenticated, redirect them to the login page and
@@ -34,6 +33,7 @@ func (app *application) requireAuthentication(next http.Handler) http.Handler {
 	)
 }
 
+// secureHeaders sets generic protection headers
 func secureHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(rw http.ResponseWriter, r *http.Request) {
