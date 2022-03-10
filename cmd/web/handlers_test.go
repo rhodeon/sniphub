@@ -1,45 +1,39 @@
 package main
 
 import (
-	"io"
+	"fmt"
+	"github.com/rhodeon/sniphub/pkg/testhelpers"
 	"net/http"
-	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
 func Test_application_showSnip(t *testing.T) {
-	t.Run("non-integer snip id generates 404 response", func(t *testing.T) {
-		rr := httptest.NewRecorder()
-		r, err := http.NewRequest(http.MethodGet, "/snip/first", nil)
-		if err != nil {
-			t.Fatal(err)
-		}
+	app := newTestApp(t)
+	testServer := newTestServer(t, app.routesHandler())
+	defer testServer.Close()
 
-		app := &application{}
-		app.showSnip(rr, r)
-		rs := rr.Result()
+	tests := []struct {
+		name     string
+		urlPath  string
+		wantCode int
+		wantBody string
+	}{
+		{"valid id", "/snip/1", 200, "this is a mock snip"},
+		{"zero id", "/snip/0", 404, fmt.Sprintln(http.StatusText(http.StatusNotFound))},
+		{"id out of range", "/snip/10", 404, fmt.Sprintln(http.StatusText(http.StatusNotFound))},
+	}
 
-		// assert status code
-		gotStatusCode := rs.StatusCode
-		wantStatusCode := http.StatusNotFound
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// assert status code
+			code, _, body := testServer.get(t, tt.urlPath)
+			testhelpers.AssertInt(t, code, tt.wantCode)
 
-		if gotStatusCode != wantStatusCode {
-			t.Errorf("\nGot:\t%d\nWant:\t%d", gotStatusCode, wantStatusCode)
-		}
-
-		// assert response body
-		rsBody, err := io.ReadAll(rs.Body)
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer rs.Body.Close()
-		gotBody := string(rsBody)
-		wantBody := http.StatusText(http.StatusNotFound) + "\n"
-
-		if gotBody != wantBody {
-			t.Errorf("\nGot:\t%q\nWant:\t%q", gotBody, wantBody)
-		}
-	})
-
-	// TODO: Add subtests for database actions.
+			// assert response body
+			if !strings.Contains(body, tt.wantBody) {
+				t.Errorf("want body to contain %q", tt.wantBody)
+			}
+		})
+	}
 }

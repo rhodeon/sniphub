@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/rhodeon/sniphub/pkg/testhelpers"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -33,9 +34,7 @@ func Test_secureHeaders(t *testing.T) {
 		for _, tt := range tests {
 			t.Run(tt.key, func(t *testing.T) {
 				got := rs.Header.Get(tt.key)
-				if got != tt.value {
-					t.Errorf("\nGot:\t%s\nWant:\t%s", got, tt.value)
-				}
+				testhelpers.AssertString(t, got, tt.value)
 			})
 		}
 	})
@@ -53,8 +52,6 @@ func Test_secureHeaders(t *testing.T) {
 		gotBody := string(rsBody)
 		wantBody := "next handler called"
 
-		if gotBody != wantBody {
-			t.Errorf("\nGot:\t%s\nWant:\t%s", gotBody, wantBody)
-		}
+		testhelpers.AssertString(t, gotBody, wantBody)
 	})
 }
