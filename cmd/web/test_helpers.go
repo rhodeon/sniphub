@@ -5,6 +5,7 @@ import (
 	"github.com/rhodeon/sniphub/pkg/models/mock"
 	"io"
 	"net/http"
+	"net/http/cookiejar"
 	"net/http/httptest"
 	"testing"
 )
@@ -35,10 +36,24 @@ type testServer struct {
 	*httptest.Server
 }
 
-// newTestServer starts and returns a new testserver.
+// newTestServer starts and returns a new testServer.
 func newTestServer(t *testing.T, h http.Handler) *testServer {
 	t.Helper()
+
 	ts := httptest.NewServer(h)
+
+	// set a cookie jar to store cookies
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ts.Client().Jar = jar
+
+	// disable redirects
+	ts.Client().CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
+	}
+
 	return &testServer{ts}
 }
 
