@@ -75,7 +75,7 @@ func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 
 	// redirect to login page
 	app.sessionManager.Put(r.Context(), session.KeyFlashMessage, session.RegistrationSuccessful)
-	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+	http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
 }
 
 // loginUserGet displays the user login form.
