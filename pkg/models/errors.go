@@ -2,7 +2,6 @@ package models
 
 import (
 	"errors"
-	"time"
 )
 
 var (
@@ -12,20 +11,3 @@ var (
 	ErrDuplicateEmail     = errors.New("models: duplicate email")
 	ErrInvalidUser        = errors.New("models: user not found")
 )
-
-type Snip struct {
-	Id      int
-	User    string
-	Title   string
-	Content string
-	Created time.Time
-}
-
-type User struct {
-	Id             int
-	Username       string
-	Email          string // unique users_uc_email constraint
-	HashedPassword string
-	Created        time.Time
-	Active         bool
-}

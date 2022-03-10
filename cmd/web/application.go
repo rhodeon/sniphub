@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/rhodeon/sniphub/pkg/models"
 	"html/template"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/rhodeon/sniphub/pkg/models/mysql"
 )
 
 type application struct {
@@ -12,6 +12,6 @@ type application struct {
 	sessionManager *scs.SessionManager
 
 	// database controllers
-	snips *mysql.SnipController
-	users *mysql.UserController
+	snips models.SnipController
+	users models.UserController
 }

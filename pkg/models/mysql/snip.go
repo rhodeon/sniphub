@@ -3,11 +3,11 @@ package mysql
 import (
 	"database/sql"
 	"errors"
-
 	"github.com/rhodeon/sniphub/pkg/models"
 )
 
 type SnipController struct {
+	models.SnipController
 	Db *sql.DB
 }
 
