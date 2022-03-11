@@ -46,13 +46,15 @@ func (c *UserController) Authenticate(email string, password string) (int, error
 }
 
 func (c *UserController) Get(id int) (models.User, error) {
-	// check if id is in the range of mockUsers indices
-	if (0 < id) && (id < len(mockUsers)-1) {
-		return mockUsers[id], nil
+	// iterate over mockUsers to return user with matching id
+	for _, user := range mockUsers {
+		if user.Id == id {
+			return user, nil
+		}
 	}
 	return models.User{}, models.ErrInvalidUser
 }
 
 func (c *UserController) GetSnips(username string) ([]models.Snip, error) {
-	return []models.Snip{mockSnip}, nil
+	return mockSnips, nil
 }
