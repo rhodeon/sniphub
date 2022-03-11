@@ -14,8 +14,8 @@ func Test_application_signupUserPost(t *testing.T) {
 	testServer := newTestServer(t, app.routesHandler())
 	defer testServer.Close()
 
-	_, _, _ = testServer.get(t, "/auth/signup")
-	csrfToken := "" // extractCSRFToken(t, []byte(body))
+	_, _, body := testServer.get(t, "/auth/signup")
+	csrfToken := extractCSRFToken(t, []byte(body))
 
 	tests := []struct {
 		name         string
@@ -61,5 +61,4 @@ func Test_application_signupUserPost(t *testing.T) {
 			}
 		})
 	}
-	// TODO: fix csrf token mismatch
 }
