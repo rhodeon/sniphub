@@ -53,7 +53,7 @@ func (f *Form) MinLength(min int, fields ...string) {
 	for _, field := range fields {
 		value := f.Values.Get(field)
 		if utf8.RuneCountInString(value) < min {
-			f.Errors.Add(field, fmt.Sprintf("This field have at least %d characters", min))
+			f.Errors.Add(field, fmt.Sprintf("This field must have at least %d characters", min))
 		}
 	}
 

@@ -117,3 +117,22 @@ func (app *application) showLatestSnips(w http.ResponseWriter, r *http.Request) 
 	snipTemplate := &TemplateData{Snips: snips}
 	app.renderTemplate(w, r, "latest.page.gohtml", snipTemplate)
 }
+
+// showUserSnips displays the snips for a user.
+func (app *application) showUserSnips(w http.ResponseWriter, r *http.Request) {
+	username := chi.URLParam(r, "username")
+
+	// retrieve user snips
+	snips, err := app.users.GetSnips(username)
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	user := SelectedUserTemplate{
+		Name:  username,
+		Snips: snips,
+	}
+	td := &TemplateData{SelectedUser: user}
+	app.renderTemplate(w, r, "user_snips.page.gohtml", td)
+}

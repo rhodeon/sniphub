@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"github.com/go-chi/chi/v5"
 	"github.com/rhodeon/sniphub/pkg/forms"
 	"github.com/rhodeon/sniphub/pkg/models"
 	"github.com/rhodeon/sniphub/pkg/session"
@@ -24,8 +23,8 @@ func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 	// validate name, email and password
 	form := forms.New(r.PostForm)
 	form.Required(forms.Username, forms.Email, forms.Password)
-	form.MatchesPattern(forms.Email, forms.EmailRX)
 	form.MaxLength(255, forms.Username, forms.Email)
+	form.MatchesPattern(forms.Email, forms.EmailRX)
 	form.MinLength(10, forms.Password)
 
 	// reload page with existing errors
@@ -119,23 +118,4 @@ func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
 	app.sessionManager.Remove(r.Context(), session.KeyUserId)
 	app.sessionManager.Put(r.Context(), session.KeyFlashMessage, session.LogoutSuccessful)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
-}
-
-// showUserSnips displays the snips for a user.
-func (app *application) showUserSnips(w http.ResponseWriter, r *http.Request) {
-	username := chi.URLParam(r, "username")
-
-	// retrieve user snips
-	snips, err := app.users.GetSnips(username)
-	if err != nil {
-		serverError(w, err)
-		return
-	}
-
-	user := SelectedUserTemplate{
-		Name:  username,
-		Snips: snips,
-	}
-	td := &TemplateData{SelectedUser: user}
-	app.renderTemplate(w, r, "user_snips.page.gohtml", td)
 }

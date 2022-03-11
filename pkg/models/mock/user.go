@@ -5,13 +5,23 @@ import (
 	"time"
 )
 
-var mockUser = models.User{
-	Id:             1,
-	Username:       "rhodeon",
-	Email:          "rhodeon@mail.com",
-	HashedPassword: "",
-	Created:        time.Time{},
-	Active:         false,
+var mockUsers = []models.User{
+	{
+		Id:             1,
+		Username:       "rhodeon",
+		Email:          "rhodeon@mail.com",
+		HashedPassword: "",
+		Created:        time.Time{},
+		Active:         true,
+	},
+	{
+		Id:             2,
+		Username:       "crusoe",
+		Email:          "crusoe@mail.com",
+		HashedPassword: "",
+		Created:        time.Time{},
+		Active:         true,
+	},
 }
 
 type UserController struct {
@@ -19,6 +29,15 @@ type UserController struct {
 }
 
 func (c *UserController) Insert(username string, email string, password string) error {
+	// check for duplicate username or email
+	for _, user := range mockUsers {
+		if username == user.Username {
+			return models.ErrDuplicateUsername
+		}
+		if email == user.Email {
+			return models.ErrDuplicateEmail
+		}
+	}
 	return nil
 }
 
@@ -27,7 +46,11 @@ func (c *UserController) Authenticate(email string, password string) (int, error
 }
 
 func (c *UserController) Get(id int) (models.User, error) {
-	return mockUser, nil
+	// check if id is in the range of mockUsers indices
+	if (0 < id) && (id < len(mockUsers)-1) {
+		return mockUsers[id], nil
+	}
+	return models.User{}, models.ErrInvalidUser
 }
 
 func (c *UserController) GetSnips(username string) ([]models.Snip, error) {
