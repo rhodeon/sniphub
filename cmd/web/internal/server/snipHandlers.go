@@ -13,11 +13,6 @@ import (
 	"github.com/rhodeon/sniphub/pkg/models"
 )
 
-// Default home response
-func (app *Application) home(w http.ResponseWriter, r *http.Request) {
-	app.renderTemplate(w, r, "home.page.gohtml", nil)
-}
-
 // Displays a specified snippet
 func (app *Application) showSnip(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
@@ -89,12 +84,6 @@ func (app *Application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 	// redirect user to view newly created snip
 	app.SessionManager.Put(r.Context(), session2.KeyFlashMessage, session2.SnipCreated)
 	http.Redirect(w, r, fmt.Sprintf("%s/%d", showSnipRoute, id), http.StatusSeeOther)
-}
-
-// Serves static files
-func (app *Application) serveStaticFiles(w http.ResponseWriter, r *http.Request) {
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-	http.StripPrefix("/static/", fileServer).ServeHTTP(w, r)
 }
 
 // Displays latest snips.
