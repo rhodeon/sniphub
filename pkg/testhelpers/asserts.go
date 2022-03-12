@@ -3,6 +3,7 @@ package testhelpers
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -43,5 +44,14 @@ func AssertStruct(t *testing.T, got interface{}, want interface{}) {
 
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("\nGot:\t%+v\nWant:\t%+v", got, want)
+	}
+}
+
+// AssertTemplateContent verifies if a wanted string is contained in a template body.
+func AssertTemplateContent(t *testing.T, body string, want string) {
+	t.Helper()
+
+	if !strings.Contains(body, want) {
+		t.Errorf("want body to contain %q", want)
 	}
 }

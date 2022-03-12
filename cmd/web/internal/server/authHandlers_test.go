@@ -5,7 +5,6 @@ import (
 	"github.com/rhodeon/sniphub/pkg/testhelpers"
 	"net/http"
 	"net/url"
-	"strings"
 	"testing"
 )
 
@@ -34,8 +33,8 @@ func TestApplication_signupUserPost(t *testing.T) {
 		{"mismatched email (missing local name)", "rhodeon", "@mail.com", "passworder", csrfToken, http.StatusOK, forms.ErrInvalidField},
 		{"mismatched email (missing period prefix in domain)", "rhodeon", "rhodeon@.com", "passworder", csrfToken, http.StatusOK, forms.ErrInvalidField},
 		{"mismatched email (missing period suffix in domain)", "rhodeon", "rhodeon@mail.", "passworder", csrfToken, http.StatusOK, forms.ErrInvalidField},
-		{"username over max length", "ddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss", "rhodeon@mail.com", "passworder", csrfToken, http.StatusOK, "This field must not have over 255 characters"},
-		{"email over max length", "rhodeon", "ddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss", "passworder", csrfToken, http.StatusOK, "This field must not have over 255 characters"},
+		{"username over max length", "ddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssddssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss", "rhodeon@mail.com", "passworder", csrfToken, http.StatusOK, "This field must not have over 255 characters"},
+		{"email over max length", "rhodeon", "ddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssddssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss", "passworder", csrfToken, http.StatusOK, "This field must not have over 255 characters"},
 		{"password below minimum length", "rhodeon", "rhodeon@mail.com", "pass", csrfToken, http.StatusOK, "This field must have at least 10 characters"},
 		{"username already exists", "rhodeon", "ruona@mail.com", "passworder", csrfToken, http.StatusOK, forms.ErrExistingUsername},
 		{"email already exists", "ruona", "rhodeon@mail.com", "passworder", csrfToken, http.StatusOK, forms.ErrExistingEmail},
@@ -49,16 +48,11 @@ func TestApplication_signupUserPost(t *testing.T) {
 				forms.Password:  {tt.userPassword},
 				forms.CsrfToken: {tt.csrfToken},
 			}
-
 			code, _, body := testServer.postForm(t, signupRoute, form)
 
-			// assert response status code
+			// assert response status code and body
 			testhelpers.AssertInt(t, code, tt.wantCode)
-
-			// assert response body
-			if !strings.Contains(body, tt.wantBody) {
-				t.Errorf("want body to contain %q", tt.wantBody)
-			}
+			testhelpers.AssertTemplateContent(t, body, tt.wantBody)
 		})
 	}
 }
@@ -92,16 +86,11 @@ func TestApplication_loginUserPost(t *testing.T) {
 				forms.Password:  {tt.password},
 				forms.CsrfToken: {tt.csrfToken},
 			}
-
 			code, _, body := testServer.postForm(t, loginRoute, form)
 
-			// assert status code
+			// assert status code and body
 			testhelpers.AssertInt(t, code, tt.wantCode)
-
-			// assert response body
-			if !strings.Contains(body, tt.wantBody) {
-				t.Errorf("want body to contain %q", tt.wantBody)
-			}
+			testhelpers.AssertTemplateContent(t, body, tt.wantBody)
 		})
 	}
 }

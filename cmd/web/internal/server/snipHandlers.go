@@ -3,7 +3,7 @@ package server
 import (
 	"errors"
 	"fmt"
-	session2 "github.com/rhodeon/sniphub/cmd/web/internal/session"
+	"github.com/rhodeon/sniphub/cmd/web/internal/session"
 	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
 	"net/http"
 	"strconv"
@@ -13,7 +13,7 @@ import (
 	"github.com/rhodeon/sniphub/pkg/models"
 )
 
-// Displays a specified snippet
+// showSnip a specified snippet
 func (app *Application) showSnip(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil || id < 0 {
@@ -38,13 +38,13 @@ func (app *Application) showSnip(w http.ResponseWriter, r *http.Request) {
 	app.renderTemplate(w, r, "show.page.gohtml", snipTemplate)
 }
 
-// Displays snip creation form
+// createSnipGet displays snip creation form
 func (app *Application) createSnipGet(w http.ResponseWriter, r *http.Request) {
 	app.renderTemplate(w, r, "create.page.gohtml", &templates.TemplateData{Form: forms.New(nil)})
 }
 
-// Creates snip from submitted form and
-// Redirect user to view the newly created snip.
+// createSnipPost creates a snip from a submitted form and
+// redirects the client to view the newly created snip.
 // Returns to the creation form on error.
 func (app *Application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 	// verify form's content
@@ -82,7 +82,7 @@ func (app *Application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// redirect user to view newly created snip
-	app.SessionManager.Put(r.Context(), session2.KeyFlashMessage, session2.SnipCreated)
+	app.SessionManager.Put(r.Context(), session.KeyFlashMessage, session.SnipCreated)
 	http.Redirect(w, r, fmt.Sprintf("%s/%d", showSnipRoute, id), http.StatusSeeOther)
 }
 
@@ -108,7 +108,7 @@ func (app *Application) showLatestSnips(w http.ResponseWriter, r *http.Request) 
 	app.renderTemplate(w, r, "latest.page.gohtml", snipTemplate)
 }
 
-// showUserSnips displays the snips for a user.
+// showUserSnips displays the snips created by a user.
 func (app *Application) showUserSnips(w http.ResponseWriter, r *http.Request) {
 	username := chi.URLParam(r, "username")
 
