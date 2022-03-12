@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"github.com/alexedwards/scs/mysqlstore"
+	server2 "github.com/rhodeon/sniphub/cmd/web/internal/server"
 	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
 	"net/http"
 	"time"
@@ -38,16 +39,16 @@ func main() {
 	sessionManager.Cookie.Secure = true
 	sessionManager.Cookie.SameSite = http.SameSiteStrictMode
 
-	app := application{
-		templateCache:  templateCache,
-		sessionManager: sessionManager,
-		snips:          &mysql.SnipController{Db: db},
-		users:          &mysql.UserController{Db: db},
+	app := server2.Application{
+		TemplateCache:  templateCache,
+		SessionManager: sessionManager,
+		Snips:          &mysql.SnipController{Db: db},
+		Users:          &mysql.UserController{Db: db},
 	}
 
 	server := &http.Server{
 		Addr:         sessionFlags.addr,
-		Handler:      app.routesHandler(),
+		Handler:      app.RoutesHandler(),
 		IdleTimeout:  1 * time.Minute,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,

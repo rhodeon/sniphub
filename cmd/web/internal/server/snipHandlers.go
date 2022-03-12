@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"errors"
@@ -14,12 +14,12 @@ import (
 )
 
 // Default home response
-func (app *application) home(w http.ResponseWriter, r *http.Request) {
+func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 	app.renderTemplate(w, r, "home.page.gohtml", nil)
 }
 
 // Displays a specified snippet
-func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
+func (app *Application) showSnip(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil || id < 0 {
 		notFoundError(w)
@@ -27,7 +27,7 @@ func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// attempt to retrieve the snip
-	snip, err := app.snips.Get(id)
+	snip, err := app.Snips.Get(id)
 	if err != nil {
 		// return a 404 error if the id matches none in the database
 		if errors.Is(err, models.ErrNoRecord) {
@@ -44,14 +44,14 @@ func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 }
 
 // Displays snip creation form
-func (app *application) createSnipGet(w http.ResponseWriter, r *http.Request) {
+func (app *Application) createSnipGet(w http.ResponseWriter, r *http.Request) {
 	app.renderTemplate(w, r, "create.page.gohtml", &templates.TemplateData{Form: forms.New(nil)})
 }
 
 // Creates snip from submitted form and
 // Redirect user to view the newly created snip.
 // Returns to the creation form on error.
-func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
+func (app *Application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 	// verify form's content
 	err := r.ParseForm()
 	if err != nil {
@@ -76,7 +76,7 @@ func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// save the snip in the database
-	id, err := app.snips.Insert(
+	id, err := app.Snips.Insert(
 		app.getUserFromContext(r).Username,
 		form.Values.Get(forms.Title),
 		form.Values.Get(forms.Content),
@@ -87,19 +87,19 @@ func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// redirect user to view newly created snip
-	app.sessionManager.Put(r.Context(), session2.KeyFlashMessage, session2.SnipCreated)
+	app.SessionManager.Put(r.Context(), session2.KeyFlashMessage, session2.SnipCreated)
 	http.Redirect(w, r, fmt.Sprintf("%s/%d", showSnipRoute, id), http.StatusSeeOther)
 }
 
 // Serves static files
-func (app *application) serveStaticFiles(w http.ResponseWriter, r *http.Request) {
+func (app *Application) serveStaticFiles(w http.ResponseWriter, r *http.Request) {
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	http.StripPrefix("/static/", fileServer).ServeHTTP(w, r)
 }
 
 // Displays latest snips.
 // Default limit of 10 if the limit query is less than 1 or nonexistent/malformed.
-func (app *application) showLatestSnips(w http.ResponseWriter, r *http.Request) {
+func (app *Application) showLatestSnips(w http.ResponseWriter, r *http.Request) {
 	limitParam := r.URL.Query().Get("limit")
 
 	limit, err := strconv.Atoi(limitParam)
@@ -108,7 +108,7 @@ func (app *application) showLatestSnips(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// fetch latest snips from the database
-	snips, err := app.snips.Latest(limit)
+	snips, err := app.Snips.Latest(limit)
 	if err != nil {
 		serverError(w, err)
 		return
@@ -120,11 +120,11 @@ func (app *application) showLatestSnips(w http.ResponseWriter, r *http.Request) 
 }
 
 // showUserSnips displays the snips for a user.
-func (app *application) showUserSnips(w http.ResponseWriter, r *http.Request) {
+func (app *Application) showUserSnips(w http.ResponseWriter, r *http.Request) {
 	username := chi.URLParam(r, "username")
 
 	// retrieve user snips
-	snips, err := app.users.GetSnips(username)
+	snips, err := app.Users.GetSnips(username)
 	if err != nil {
 		serverError(w, err)
 		return

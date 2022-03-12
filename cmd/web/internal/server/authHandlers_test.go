@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"github.com/rhodeon/sniphub/pkg/forms"
@@ -11,7 +11,7 @@ import (
 
 func Test_application_signupUserPost(t *testing.T) {
 	app := newTestApp(t)
-	testServer := newTestServer(t, app.routesHandler())
+	testServer := newTestServer(t, app.RoutesHandler())
 	defer testServer.Close()
 
 	_, _, body := testServer.get(t, "/auth/signup")

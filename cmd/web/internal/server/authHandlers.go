@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"errors"
@@ -10,12 +10,12 @@ import (
 )
 
 // signupUserGet displays the account registration form.
-func (app *application) signupUserGet(w http.ResponseWriter, r *http.Request) {
+func (app *Application) signupUserGet(w http.ResponseWriter, r *http.Request) {
 	app.renderTemplate(w, r, "signup.page.gohtml", &templates.TemplateData{Form: forms.New(nil)})
 }
 
 // signupUserPost saves a new user account to the database.
-func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
+func (app *Application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		clientError(w, http.StatusBadRequest)
@@ -40,7 +40,7 @@ func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = app.users.Insert(
+	err = app.Users.Insert(
 		form.Values.Get(forms.Username),
 		form.Values.Get(forms.Email),
 		form.Values.Get(forms.Password),
@@ -74,18 +74,18 @@ func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// redirect to login page
-	app.sessionManager.Put(r.Context(), session2.KeyFlashMessage, session2.RegistrationSuccessful)
+	app.SessionManager.Put(r.Context(), session2.KeyFlashMessage, session2.RegistrationSuccessful)
 	http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
 }
 
 // loginUserGet displays the user login form.
-func (app *application) loginUserGet(w http.ResponseWriter, r *http.Request) {
+func (app *Application) loginUserGet(w http.ResponseWriter, r *http.Request) {
 	app.renderTemplate(w, r, "login.page.gohtml", &templates.TemplateData{Form: forms.New(nil)})
 }
 
 // loginUserPost compares received email and password against the database,
 // and redirects to the homepage with the user ID on success.
-func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
+func (app *Application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		clientError(w, http.StatusBadRequest)
@@ -93,7 +93,7 @@ func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 
 	// verify email and password
 	form := forms.New(r.PostForm)
-	id, err := app.users.Authenticate(form.Values.Get(forms.Email), form.Values.Get(forms.Password))
+	id, err := app.Users.Authenticate(form.Values.Get(forms.Email), form.Values.Get(forms.Password))
 	if err != nil {
 		if errors.Is(err, models.ErrInvalidCredentials) {
 			form.Errors.Add(forms.Generic, "Email or password is incorrect")
@@ -110,13 +110,13 @@ func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// store id and redirect to homepage
-	app.sessionManager.Put(r.Context(), session2.KeyUserId, id)
+	app.SessionManager.Put(r.Context(), session2.KeyUserId, id)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // logoutUser removes the user id session key, and redirects to the homepage.
-func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
-	app.sessionManager.Remove(r.Context(), session2.KeyUserId)
-	app.sessionManager.Put(r.Context(), session2.KeyFlashMessage, session2.LogoutSuccessful)
+func (app *Application) logoutUser(w http.ResponseWriter, r *http.Request) {
+	app.SessionManager.Remove(r.Context(), session2.KeyUserId)
+	app.SessionManager.Put(r.Context(), session2.KeyFlashMessage, session2.LogoutSuccessful)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

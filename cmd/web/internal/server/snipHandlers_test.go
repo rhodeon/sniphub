@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 
 func Test_application_showSnip(t *testing.T) {
 	app := newTestApp(t)
-	testServer := newTestServer(t, app.routesHandler())
+	testServer := newTestServer(t, app.RoutesHandler())
 	defer testServer.Close()
 
 	tests := []struct {

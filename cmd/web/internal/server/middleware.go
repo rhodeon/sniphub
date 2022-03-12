@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 )
 
 // requireAuthentication redirects a user to the login page if they aren't logged in.
-func (app *application) requireAuthentication(next http.Handler) http.Handler {
+func (app *Application) requireAuthentication(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			// if the user is not authenticated, redirect them to the login page and
@@ -83,22 +83,22 @@ func noSurf(next http.Handler) http.Handler {
 
 // authenticate sets the request context with a valid authentication if it comes from a valid user.
 // Otherwise, it passes on the request as-is.
-func (app application) authenticate(next http.Handler) http.Handler {
+func (app Application) authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			// carry on without authenticating if there is currently no user id key set
-			exists := app.sessionManager.Exists(r.Context(), session.KeyUserId)
+			exists := app.SessionManager.Exists(r.Context(), session.KeyUserId)
 			if !exists {
 				next.ServeHTTP(w, r)
 				return
 			}
 
 			// attempt to fetch user details if the user id key exists
-			user, err := app.users.Get(app.sessionManager.GetInt(r.Context(), session.KeyUserId))
+			user, err := app.Users.Get(app.SessionManager.GetInt(r.Context(), session.KeyUserId))
 			if err != nil {
 				if errors.Is(err, models.ErrInvalidUser) {
 					// remove user id key and proceed if no user is found
-					app.sessionManager.Remove(r.Context(), session.KeyUserId)
+					app.SessionManager.Remove(r.Context(), session.KeyUserId)
 					next.ServeHTTP(w, r)
 				} else {
 					// raise an error for any other reason
@@ -109,14 +109,14 @@ func (app application) authenticate(next http.Handler) http.Handler {
 
 			// do not authenticate if the user is inactive
 			if !user.Active {
-				app.sessionManager.Remove(r.Context(), session.KeyUserId)
+				app.SessionManager.Remove(r.Context(), session.KeyUserId)
 				next.ServeHTTP(w, r)
 				return
 			}
 
 			// otherwise, authenticate the current request for future handlers
-			ctx := context.WithValue(r.Context(), contextKeyIsAuthenticated, true)
-			ctx = context.WithValue(ctx, contextKeyUser, user) // save user data in context
+			ctx := context.WithValue(r.Context(), ContextKeyIsAuthenticated, true)
+			ctx = context.WithValue(ctx, ContextKeyUser, user) // save user data in context
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 }

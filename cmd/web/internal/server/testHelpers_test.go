@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"github.com/alexedwards/scs/v2"
@@ -16,21 +16,21 @@ import (
 )
 
 // newTestApp generates a test application to provide dependencies for testing.
-func newTestApp(t *testing.T) *application {
+func newTestApp(t *testing.T) *Application {
 	t.Helper()
 
-	templateCache, err := templates.NewTemplateCache("./../../ui/html/")
+	templateCache, err := templates.NewTemplateCache("./../../../../ui/html/")
 	testhelpers.AssertFatalError(t, err)
 
 	sessionManager := scs.New()
 	sessionManager.Cookie.Secure = true
 	sessionManager.Cookie.SameSite = http.SameSiteStrictMode
 
-	return &application{
-		templateCache:  templateCache,
-		sessionManager: sessionManager,
-		snips:          &mock.SnipController{},
-		users:          &mock.UserController{},
+	return &Application{
+		TemplateCache:  templateCache,
+		SessionManager: sessionManager,
+		Snips:          &mock.SnipController{},
+		Users:          &mock.UserController{},
 	}
 }
 

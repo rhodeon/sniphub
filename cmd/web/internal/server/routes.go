@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"net/http"
@@ -15,12 +15,12 @@ const (
 	latestSnipsRoute = "/latest"
 )
 
-func (app *application) routesHandler() http.Handler {
+func (app *Application) RoutesHandler() http.Handler {
 	router := chi.NewRouter()
 
 	// set middleware
 	router.Use(recoverPanic, logRequests, secureHeaders)
-	router.Use(app.sessionManager.LoadAndSave)
+	router.Use(app.SessionManager.LoadAndSave)
 	router.Use(middleware.CleanPath, middleware.StripSlashes)
 	router.Use(noSurf, app.authenticate)
 
