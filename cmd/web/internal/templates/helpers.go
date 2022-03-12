@@ -1,40 +1,17 @@
-package main
+package templates
 
 import (
-	"github.com/rhodeon/sniphub/pkg/forms"
-	"github.com/rhodeon/sniphub/pkg/models"
 	"html/template"
 	"path/filepath"
+	"time"
 )
-
-type TemplateData struct {
-	// default data
-	CurrentYear     int
-	CsrfToken       string
-	FlashMessage    string
-	IsAuthenticated bool
-	User            models.User
-
-	// data from submitted form
-	Form *forms.Form
-
-	// data from database
-	Snip         models.Snip
-	Snips        []models.Snip
-	SelectedUser SelectedUserTemplate
-}
-
-type SelectedUserTemplate struct {
-	Name  string
-	Snips []models.Snip
-}
 
 var templateFunctions = template.FuncMap{
 	"formattedDate": formattedDate,
 }
 
-// Caches templates for rendering pages.
-func newTemplateCache(dir string) (map[string]*template.Template, error) {
+// NewTemplateCache caches templates for rendering pages.
+func NewTemplateCache(dir string) (map[string]*template.Template, error) {
 	// initialize a new map to act as the cache
 	cache := map[string]*template.Template{}
 
@@ -72,4 +49,15 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 	}
 
 	return cache, err
+}
+
+// formattedDate formats time to be more readable.
+func formattedDate(t time.Time) string {
+	// return zero-time instances as empty strings
+	if t.IsZero() {
+		return ""
+	}
+
+	// convert time to UTC before formatting
+	return t.UTC().Format("Jan 02, 2006 at 15:04")
 }

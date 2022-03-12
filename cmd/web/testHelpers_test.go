@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/alexedwards/scs/v2"
+	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
 	"github.com/rhodeon/sniphub/pkg/models/mock"
 	"github.com/rhodeon/sniphub/pkg/testhelpers"
 	"html"
@@ -18,7 +19,7 @@ import (
 func newTestApp(t *testing.T) *application {
 	t.Helper()
 
-	templateCache, err := newTemplateCache("./../../ui/html/")
+	templateCache, err := templates.NewTemplateCache("./../../ui/html/")
 	testhelpers.AssertFatalError(t, err)
 
 	sessionManager := scs.New()

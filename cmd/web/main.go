@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"github.com/alexedwards/scs/mysqlstore"
+	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
 	"net/http"
 	"time"
 
@@ -26,7 +27,7 @@ func main() {
 	defer db.Close()
 
 	// initialize a new template cache
-	templateCache, err := newTemplateCache("./ui/html")
+	templateCache, err := templates.NewTemplateCache("./ui/html")
 	if err != nil {
 		prettylog.FatalError(err)
 	}

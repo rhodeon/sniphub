@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
 	"net/http"
 	"strconv"
 
@@ -38,13 +39,13 @@ func (app *application) showSnip(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// show confirmation flash and specified snip
-	snipTemplate := &TemplateData{Snip: snip}
+	snipTemplate := &templates.TemplateData{Snip: snip}
 	app.renderTemplate(w, r, "show.page.gohtml", snipTemplate)
 }
 
 // Displays snip creation form
 func (app *application) createSnipGet(w http.ResponseWriter, r *http.Request) {
-	app.renderTemplate(w, r, "create.page.gohtml", &TemplateData{Form: forms.New(nil)})
+	app.renderTemplate(w, r, "create.page.gohtml", &templates.TemplateData{Form: forms.New(nil)})
 }
 
 // Creates snip from submitted form and
@@ -67,7 +68,7 @@ func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 		app.renderTemplate(
 			w, r,
 			"create.page.gohtml",
-			&TemplateData{
+			&templates.TemplateData{
 				Form: form,
 			},
 		)
@@ -114,7 +115,7 @@ func (app *application) showLatestSnips(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// display list of the latest snips
-	snipTemplate := &TemplateData{Snips: snips}
+	snipTemplate := &templates.TemplateData{Snips: snips}
 	app.renderTemplate(w, r, "latest.page.gohtml", snipTemplate)
 }
 
@@ -129,10 +130,10 @@ func (app *application) showUserSnips(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := SelectedUserTemplate{
+	user := templates.SelectedUserTemplateData{
 		Name:  username,
 		Snips: snips,
 	}
-	td := &TemplateData{SelectedUser: user}
+	td := &templates.TemplateData{SelectedUser: user}
 	app.renderTemplate(w, r, "user_snips.page.gohtml", td)
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
 	"github.com/rhodeon/sniphub/pkg/forms"
 	"github.com/rhodeon/sniphub/pkg/models"
 	"github.com/rhodeon/sniphub/pkg/session"
@@ -10,7 +11,7 @@ import (
 
 // signupUserGet displays the account registration form.
 func (app *application) signupUserGet(w http.ResponseWriter, r *http.Request) {
-	app.renderTemplate(w, r, "signup.page.gohtml", &TemplateData{Form: forms.New(nil)})
+	app.renderTemplate(w, r, "signup.page.gohtml", &templates.TemplateData{Form: forms.New(nil)})
 }
 
 // signupUserPost saves a new user account to the database.
@@ -32,7 +33,7 @@ func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 		app.renderTemplate(
 			w, r,
 			"signup.page.gohtml",
-			&TemplateData{
+			&templates.TemplateData{
 				Form: form,
 			},
 		)
@@ -50,7 +51,7 @@ func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 			form.Errors.Add(forms.Username, "Username is already taken")
 			app.renderTemplate(w, r,
 				"signup.page.gohtml",
-				&TemplateData{
+				&templates.TemplateData{
 					Form: form,
 				},
 			)
@@ -62,7 +63,7 @@ func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 			form.Errors.Add(forms.Email, "Email already in use")
 			app.renderTemplate(w, r,
 				"signup.page.gohtml",
-				&TemplateData{
+				&templates.TemplateData{
 					Form: form,
 				},
 			)
@@ -79,7 +80,7 @@ func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 
 // loginUserGet displays the user login form.
 func (app *application) loginUserGet(w http.ResponseWriter, r *http.Request) {
-	app.renderTemplate(w, r, "login.page.gohtml", &TemplateData{Form: forms.New(nil)})
+	app.renderTemplate(w, r, "login.page.gohtml", &templates.TemplateData{Form: forms.New(nil)})
 }
 
 // loginUserPost compares received email and password against the database,
@@ -98,7 +99,7 @@ func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 			form.Errors.Add(forms.Generic, "Email or password is incorrect")
 			app.renderTemplate(w, r,
 				"login.page.gohtml",
-				&TemplateData{
+				&templates.TemplateData{
 					Form: form,
 				},
 			)
