@@ -11,10 +11,9 @@ const (
 	homeRoute   = "/"
 	staticRoute = "/static/*"
 
-	showSnipRoute    = "/snip"
-	createSnipRoute  = "/snip/create"
-	latestSnipsRoute = "/latest"
-	userSnipsRoute   = "/user/{username}"
+	showSnipRoute   = "/snip"
+	createSnipRoute = "/snip/create"
+	userSnipsRoute  = "/user/{username}"
 
 	signupRoute = "/auth/signup"
 	loginRoute  = "/auth/login"
@@ -33,7 +32,6 @@ func (app *Application) RouteHandler() http.Handler {
 	// set route handlers
 	router.Get(homeRoute, app.home)
 	router.Get(staticRoute, app.serveStaticFiles)
-	router.Get(latestSnipsRoute, app.showLatestSnips)
 	router.Get(userSnipsRoute, app.showUserSnips)
 
 	router.Route("/snip", func(r chi.Router) {

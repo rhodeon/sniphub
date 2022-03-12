@@ -51,12 +51,12 @@ func (c *SnipController) Get(id int) (models.Snip, error) {
 }
 
 // Latest fetches a list of the 10 latest snips from the database.
-func (c *SnipController) Latest(limit int) ([]models.Snip, error) {
+func (c *SnipController) Latest() ([]models.Snip, error) {
 	stmt := `SELECT id, user, title, content, created FROM snips
-	ORDER by created
-	DESC LIMIT ?`
+	ORDER by created DESC
+	LIMIT 10`
 
-	rows, err := c.Db.Query(stmt, limit)
+	rows, err := c.Db.Query(stmt)
 	if err != nil {
 		return nil, err
 	}

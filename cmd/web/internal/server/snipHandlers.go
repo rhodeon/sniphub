@@ -86,28 +86,6 @@ func (app *Application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("%s/%d", showSnipRoute, id), http.StatusSeeOther)
 }
 
-// Displays latest snips.
-// Default limit of 10 if the limit query is less than 1 or nonexistent/malformed.
-func (app *Application) showLatestSnips(w http.ResponseWriter, r *http.Request) {
-	limitParam := r.URL.Query().Get("limit")
-
-	limit, err := strconv.Atoi(limitParam)
-	if err != nil || limit < 1 {
-		limit = 10 // default limit
-	}
-
-	// fetch latest snips from the database
-	snips, err := app.Snips.Latest(limit)
-	if err != nil {
-		serverError(w, err)
-		return
-	}
-
-	// display list of the latest snips
-	snipTemplate := &templates.TemplateData{Snips: snips}
-	app.renderTemplate(w, r, "latest.page.gohtml", snipTemplate)
-}
-
 // showUserSnips displays the snips created by a user.
 func (app *Application) showUserSnips(w http.ResponseWriter, r *http.Request) {
 	username := chi.URLParam(r, "username")

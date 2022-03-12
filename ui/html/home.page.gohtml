@@ -1,6 +1,28 @@
+{{- /*gotype: github.com/rhodeon/sniphub/cmd/web.TemplateData*/ -}}
+
 {{template "base" .}}
+
 {{define "title"}}Home{{end}}
+
 {{define "main"}}
     <h2>Latest Snips</h2>
-    <p>There's nothing to see here yet!</p>
+
+    {{if .Snips}}
+        {{range .Snips}}
+            <div class='snippet'>
+                <div class='metadata'>
+                    <strong>{{.Title}}</strong>
+                    <span>#{{.Id}}</span>
+                </div>
+
+                <pre><code>{{.Content}}</code></pre>
+                <div class='metadata'>
+                    <a href="/user/{{.User}}">{{.User}}</a>
+                    <time>Created: {{formattedDate .Created}}</time>
+                </div>
+            </div>
+        {{end}}
+    {{else}}
+        <p>There's nothing to see here yet!</p>
+    {{end}}
 {{end}}

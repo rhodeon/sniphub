@@ -40,6 +40,6 @@ func (c *SnipController) Get(id int) (models.Snip, error) {
 	return models.Snip{}, models.ErrNoRecord
 }
 
-func (c *SnipController) Latest(limit int) ([]models.Snip, error) {
+func (c *SnipController) Latest() ([]models.Snip, error) {
 	return mockSnips, nil
 }
