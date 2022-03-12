@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/rhodeon/sniphub/pkg/models/mock"
+	"github.com/rhodeon/sniphub/pkg/testhelpers"
 	"html"
 	"io"
 	"net/http"
@@ -18,9 +19,7 @@ func newTestApp(t *testing.T) *application {
 	t.Helper()
 
 	templateCache, err := newTemplateCache("./../../ui/html/")
-	if err != nil {
-		t.Fatal(err)
-	}
+	testhelpers.AssertFatalError(t, err)
 
 	sessionManager := scs.New()
 	sessionManager.Cookie.Secure = true
@@ -47,9 +46,7 @@ func newTestServer(t *testing.T, h http.Handler) *testServer {
 
 	// set a cookie jar to store cookies
 	jar, err := cookiejar.New(nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	testhelpers.AssertFatalError(t, err)
 	ts.Client().Jar = jar
 
 	// disable redirects
@@ -63,10 +60,10 @@ func newTestServer(t *testing.T, h http.Handler) *testServer {
 // get wraps the Get method of the test server and
 // returns the response code, headers and body.
 func (ts *testServer) get(t *testing.T, urlPath string) (int, http.Header, string) {
+	t.Helper()
+
 	rs, err := ts.Client().Get(ts.URL + urlPath)
-	if err != nil {
-		t.Fatal(err)
-	}
+	testhelpers.AssertFatalError(t, err)
 
 	return ts.parseResponse(t, rs)
 }
@@ -74,20 +71,20 @@ func (ts *testServer) get(t *testing.T, urlPath string) (int, http.Header, strin
 // postForm wraps the PostForm method of the test server and
 // returns the response code, headers and body.
 func (ts *testServer) postForm(t *testing.T, urlPath string, data url.Values) (int, http.Header, string) {
+	t.Helper()
+
 	rs, err := ts.Client().PostForm(ts.URL+urlPath, data)
-	if err != nil {
-		t.Fatal(err)
-	}
+	testhelpers.AssertFatalError(t, err)
 
 	return ts.parseResponse(t, rs)
 }
 
 // parseResponse parses a http response and returns the code, header and body.
 func (ts *testServer) parseResponse(t *testing.T, rs *http.Response) (int, http.Header, string) {
+	t.Helper()
+
 	body, err := io.ReadAll(rs.Body)
-	if err != nil {
-		t.Fatal(err)
-	}
+	testhelpers.AssertFatalError(t, err)
 	defer rs.Body.Close()
 	return rs.StatusCode, rs.Header, string(body)
 }
@@ -96,6 +93,8 @@ func (ts *testServer) parseResponse(t *testing.T, rs *http.Response) (int, http.
 var csrfTokenRX = regexp.MustCompile(`<input name='csrf_token' type='hidden' value='(.+)'>`)
 
 func extractCSRFToken(t *testing.T, body []byte) string {
+	t.Helper()
+
 	// Use the FindSubmatch method to extract the token from the HTML body.
 	// Note that this returns an array with the entire matched pattern in the
 	// first position, and the values of any captured data in the subsequent positions.

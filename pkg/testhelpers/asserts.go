@@ -30,6 +30,14 @@ func AssertError(t *testing.T, got error, want error) {
 	}
 }
 
+func AssertFatalError(t *testing.T, err error) {
+	t.Helper()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func AssertStruct(t *testing.T, got interface{}, want interface{}) {
 	t.Helper()
 

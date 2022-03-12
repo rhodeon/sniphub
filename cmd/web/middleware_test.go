@@ -15,9 +15,7 @@ var mockHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) 
 func Test_secureHeaders(t *testing.T) {
 	rr := httptest.NewRecorder()
 	req, err := http.NewRequest(http.MethodGet, "/", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	testhelpers.AssertFatalError(t, err)
 
 	secureHeaders(mockHandler).ServeHTTP(rr, req)
 	rs := rr.Result()
@@ -45,13 +43,11 @@ func Test_secureHeaders(t *testing.T) {
 		}
 
 		rsBody, err := io.ReadAll(rs.Body)
-		if err != nil {
-			t.Fatal(err)
-		}
+		testhelpers.AssertFatalError(t, err)
 		defer rs.Body.Close()
+
 		gotBody := string(rsBody)
 		wantBody := "next handler called"
-
 		testhelpers.AssertString(t, gotBody, wantBody)
 	})
 }

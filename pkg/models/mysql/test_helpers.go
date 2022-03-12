@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"database/sql"
+	"github.com/rhodeon/sniphub/pkg/testhelpers"
 	"os"
 	"testing"
 )
@@ -12,9 +13,7 @@ func newTestDb(t *testing.T) (*sql.DB, func()) {
 	t.Helper()
 
 	db, err := sql.Open("mysql", "test_web:password@/test_sniphub?parseTime=true&multiStatements=true")
-	if err != nil {
-		t.Fatal(err)
-	}
+	testhelpers.AssertFatalError(t, err)
 
 	// create tables
 	execScript(t, db, "./testdata/setup.sql")
@@ -32,12 +31,8 @@ func execScript(t *testing.T, db *sql.DB, scriptPath string) {
 	t.Helper()
 
 	script, err := os.ReadFile(scriptPath)
-	if err != nil {
-		t.Fatal(err)
-	}
+	testhelpers.AssertFatalError(t, err)
 
 	_, err = db.Exec(string(script))
-	if err != nil {
-		t.Fatal(err)
-	}
+	testhelpers.AssertFatalError(t, err)
 }
