@@ -48,7 +48,7 @@ func (app *Application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// check for duplicate username
 		if errors.Is(err, models.ErrDuplicateUsername) {
-			form.Errors.Add(forms.Username, "Username is already taken")
+			form.Errors.Add(forms.Username, forms.ErrExistingUsername)
 			app.renderTemplate(w, r,
 				"signup.page.gohtml",
 				&templates.TemplateData{
@@ -60,7 +60,7 @@ func (app *Application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 
 		// check for duplicate email
 		if errors.Is(err, models.ErrDuplicateEmail) {
-			form.Errors.Add(forms.Email, "Email already in use")
+			form.Errors.Add(forms.Email, forms.ErrExistingEmail)
 			app.renderTemplate(w, r,
 				"signup.page.gohtml",
 				&templates.TemplateData{
@@ -96,7 +96,7 @@ func (app *Application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 	id, err := app.Users.Authenticate(form.Values.Get(forms.Email), form.Values.Get(forms.Password))
 	if err != nil {
 		if errors.Is(err, models.ErrInvalidCredentials) {
-			form.Errors.Add(forms.Generic, "Email or password is incorrect")
+			form.Errors.Add(forms.Generic, forms.ErrInvalidEmailOrPassword)
 			app.renderTemplate(w, r,
 				"login.page.gohtml",
 				&templates.TemplateData{

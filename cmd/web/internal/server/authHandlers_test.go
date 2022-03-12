@@ -27,18 +27,18 @@ func Test_application_signupUserPost(t *testing.T) {
 		wantBody     string
 	}{
 		{"valid details", "ruona", "ruona@mail.com", "passworder", csrfToken, http.StatusSeeOther, ""},
-		{"empty username", "", "rhodeon@mail.com", "passworder", csrfToken, http.StatusOK, "This field cannot be blank"},
-		{"empty email", "rhodeon", "", "passworder", csrfToken, http.StatusOK, "This field cannot be blank"},
-		{"empty password", "rhodeon", "rhodeon@mail.com", "", csrfToken, http.StatusOK, "This field cannot be blank"},
-		{"mismatched email (missing @)", "rhodeon", "rhodeonmail.com", "passworder", csrfToken, http.StatusOK, "This field is invalid"},
-		{"mismatched email (missing local name)", "rhodeon", "@mail.com", "passworder", csrfToken, http.StatusOK, "This field is invalid"},
-		{"mismatched email (missing period prefix in domain)", "rhodeon", "rhodeon@.com", "passworder", csrfToken, http.StatusOK, "This field is invalid"},
-		{"mismatched email (missing period suffix in domain)", "rhodeon", "rhodeon@mail.", "passworder", csrfToken, http.StatusOK, "This field is invalid"},
+		{"empty username", "", "rhodeon@mail.com", "passworder", csrfToken, http.StatusOK, forms.ErrBlankField},
+		{"empty email", "rhodeon", "", "passworder", csrfToken, http.StatusOK, forms.ErrBlankField},
+		{"empty password", "rhodeon", "rhodeon@mail.com", "", csrfToken, http.StatusOK, forms.ErrBlankField},
+		{"mismatched email (missing @)", "rhodeon", "rhodeonmail.com", "passworder", csrfToken, http.StatusOK, forms.ErrInvalidField},
+		{"mismatched email (missing local name)", "rhodeon", "@mail.com", "passworder", csrfToken, http.StatusOK, forms.ErrInvalidField},
+		{"mismatched email (missing period prefix in domain)", "rhodeon", "rhodeon@.com", "passworder", csrfToken, http.StatusOK, forms.ErrInvalidField},
+		{"mismatched email (missing period suffix in domain)", "rhodeon", "rhodeon@mail.", "passworder", csrfToken, http.StatusOK, forms.ErrInvalidField},
 		{"username over max length", "ddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss", "rhodeon@mail.com", "passworder", csrfToken, http.StatusOK, "This field must not have over 255 characters"},
 		{"email over max length", "rhodeon", "ddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssddsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss", "passworder", csrfToken, http.StatusOK, "This field must not have over 255 characters"},
 		{"password below minimum length", "rhodeon", "rhodeon@mail.com", "pass", csrfToken, http.StatusOK, "This field must have at least 10 characters"},
-		{"username already exists", "rhodeon", "ruona@mail.com", "passworder", csrfToken, http.StatusOK, "Username is already taken"},
-		{"email already exists", "ruona", "rhodeon@mail.com", "passworder", csrfToken, http.StatusOK, "Email already in use"},
+		{"username already exists", "rhodeon", "ruona@mail.com", "passworder", csrfToken, http.StatusOK, forms.ErrExistingUsername},
+		{"email already exists", "ruona", "rhodeon@mail.com", "passworder", csrfToken, http.StatusOK, forms.ErrExistingEmail},
 	}
 
 	for _, tt := range tests {

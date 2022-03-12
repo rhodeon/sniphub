@@ -33,7 +33,7 @@ func (f *Form) Required(fields ...string) {
 	for _, field := range fields {
 		value := f.Values.Get(field)
 		if strings.TrimSpace(value) == "" {
-			f.Errors.Add(field, "This field cannot be blank")
+			f.Errors.Add(field, ErrBlankField)
 		}
 	}
 }
@@ -63,6 +63,6 @@ func (f *Form) MinLength(min int, fields ...string) {
 func (f *Form) MatchesPattern(field string, pattern *regexp.Regexp) {
 	value := f.Values.Get(field)
 	if !pattern.MatchString(value) {
-		f.Errors.Add(field, "This field is invalid")
+		f.Errors.Add(field, ErrInvalidField)
 	}
 }
