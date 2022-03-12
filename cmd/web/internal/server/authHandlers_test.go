@@ -9,12 +9,12 @@ import (
 	"testing"
 )
 
-func Test_application_signupUserPost(t *testing.T) {
+func TestApplication_signupUserPost(t *testing.T) {
 	app := newTestApp(t)
 	testServer := newTestServer(t, app.RouteHandler())
 	defer testServer.Close()
 
-	_, _, body := testServer.get(t, "/auth/signup")
+	_, _, body := testServer.get(t, signupRoute)
 	csrfToken := extractCSRFToken(t, []byte(body))
 
 	tests := []struct {
@@ -50,9 +50,52 @@ func Test_application_signupUserPost(t *testing.T) {
 				forms.CsrfToken: {tt.csrfToken},
 			}
 
-			code, _, body := testServer.postForm(t, "/auth/signup", form)
+			code, _, body := testServer.postForm(t, signupRoute, form)
 
 			// assert response status code
+			testhelpers.AssertInt(t, code, tt.wantCode)
+
+			// assert response body
+			if !strings.Contains(body, tt.wantBody) {
+				t.Errorf("want body to contain %q", tt.wantBody)
+			}
+		})
+	}
+}
+
+func TestApplication_loginUserPost(t *testing.T) {
+	app := newTestApp(t)
+	testServer := newTestServer(t, app.RouteHandler())
+	defer testServer.Close()
+
+	_, _, body := testServer.get(t, loginRoute)
+	csrfToken := extractCSRFToken(t, []byte(body))
+	t.Logf("Token: %s", csrfToken)
+
+	tests := []struct {
+		name      string
+		email     string
+		password  string
+		csrfToken string
+		wantCode  int
+		wantBody  string
+	}{
+		{"valid credentials", "rhodeon@mail.com", "qwerty123456", csrfToken, http.StatusSeeOther, ""},
+		{"wrong email", "rhodeos@mail.com", "qwerty123456", csrfToken, http.StatusOK, forms.ErrInvalidEmailOrPassword},
+		{"wrong password", "rhodeon@mail.com", "zzz", csrfToken, http.StatusOK, forms.ErrInvalidEmailOrPassword},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			form := url.Values{
+				forms.Email:     {tt.email},
+				forms.Password:  {tt.password},
+				forms.CsrfToken: {tt.csrfToken},
+			}
+
+			code, _, body := testServer.postForm(t, loginRoute, form)
+
+			// assert status code
 			testhelpers.AssertInt(t, code, tt.wantCode)
 
 			// assert response body
