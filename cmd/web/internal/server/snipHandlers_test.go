@@ -10,7 +10,7 @@ import (
 
 func Test_application_showSnip(t *testing.T) {
 	app := newTestApp(t)
-	testServer := newTestServer(t, app.RoutesHandler())
+	testServer := newTestServer(t, app.RouteHandler())
 	defer testServer.Close()
 
 	tests := []struct {

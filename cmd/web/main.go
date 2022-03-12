@@ -48,7 +48,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:         sessionFlags.addr,
-		Handler:      app.RoutesHandler(),
+		Handler:      app.RouteHandler(),
 		IdleTimeout:  1 * time.Minute,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,

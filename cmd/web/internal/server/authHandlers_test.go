@@ -11,7 +11,7 @@ import (
 
 func Test_application_signupUserPost(t *testing.T) {
 	app := newTestApp(t)
-	testServer := newTestServer(t, app.RoutesHandler())
+	testServer := newTestServer(t, app.RouteHandler())
 	defer testServer.Close()
 
 	_, _, body := testServer.get(t, "/auth/signup")

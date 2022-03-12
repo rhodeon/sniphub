@@ -8,14 +8,20 @@ import (
 )
 
 const (
-	homeRoute        = "/"
+	homeRoute   = "/"
+	staticRoute = "/static/*"
+
 	showSnipRoute    = "/snip"
 	createSnipRoute  = "/snip/create"
-	staticRoute      = "/static/*"
 	latestSnipsRoute = "/latest"
+	userSnipsRoute   = "/user/{username}"
+
+	signupRoute = "/auth/signup"
+	loginRoute  = "/auth/login"
+	logoutRoute = "/auth/logout"
 )
 
-func (app *Application) RoutesHandler() http.Handler {
+func (app *Application) RouteHandler() http.Handler {
 	router := chi.NewRouter()
 
 	// set middleware
@@ -25,10 +31,10 @@ func (app *Application) RoutesHandler() http.Handler {
 	router.Use(noSurf, app.authenticate)
 
 	// set route handlers
-	router.Get("/", app.home)
-	router.Get("/static/*", app.serveStaticFiles)
-	router.Get("/latest", app.showLatestSnips)
-	router.Get("/user/{username}", app.showUserSnips)
+	router.Get(homeRoute, app.home)
+	router.Get(staticRoute, app.serveStaticFiles)
+	router.Get(latestSnipsRoute, app.showLatestSnips)
+	router.Get(userSnipsRoute, app.showUserSnips)
 
 	router.Route("/snip", func(r chi.Router) {
 		r.Get("/{id:[0-9]+}", app.showSnip)
