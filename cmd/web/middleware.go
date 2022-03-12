@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/justinas/nosurf"
+	"github.com/rhodeon/sniphub/cmd/web/internal/session"
 	"github.com/rhodeon/sniphub/pkg/models"
-	"github.com/rhodeon/sniphub/pkg/session"
 	"net/http"
 
 	"github.com/rhodeon/sniphub/pkg/prettylog"

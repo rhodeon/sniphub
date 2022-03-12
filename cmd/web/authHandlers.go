@@ -2,10 +2,10 @@ package main
 
 import (
 	"errors"
+	session2 "github.com/rhodeon/sniphub/cmd/web/internal/session"
 	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
 	"github.com/rhodeon/sniphub/pkg/forms"
 	"github.com/rhodeon/sniphub/pkg/models"
-	"github.com/rhodeon/sniphub/pkg/session"
 	"net/http"
 )
 
@@ -74,7 +74,7 @@ func (app *application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// redirect to login page
-	app.sessionManager.Put(r.Context(), session.KeyFlashMessage, session.RegistrationSuccessful)
+	app.sessionManager.Put(r.Context(), session2.KeyFlashMessage, session2.RegistrationSuccessful)
 	http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
 }
 
@@ -110,13 +110,13 @@ func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// store id and redirect to homepage
-	app.sessionManager.Put(r.Context(), session.KeyUserId, id)
+	app.sessionManager.Put(r.Context(), session2.KeyUserId, id)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // logoutUser removes the user id session key, and redirects to the homepage.
 func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
-	app.sessionManager.Remove(r.Context(), session.KeyUserId)
-	app.sessionManager.Put(r.Context(), session.KeyFlashMessage, session.LogoutSuccessful)
+	app.sessionManager.Remove(r.Context(), session2.KeyUserId)
+	app.sessionManager.Put(r.Context(), session2.KeyFlashMessage, session2.LogoutSuccessful)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

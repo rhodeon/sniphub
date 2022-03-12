@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	session2 "github.com/rhodeon/sniphub/cmd/web/internal/session"
 	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
 	"net/http"
 	"strconv"
@@ -10,7 +11,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/rhodeon/sniphub/pkg/forms"
 	"github.com/rhodeon/sniphub/pkg/models"
-	"github.com/rhodeon/sniphub/pkg/session"
 )
 
 // Default home response
@@ -87,7 +87,7 @@ func (app *application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// redirect user to view newly created snip
-	app.sessionManager.Put(r.Context(), session.KeyFlashMessage, session.SnipCreated)
+	app.sessionManager.Put(r.Context(), session2.KeyFlashMessage, session2.SnipCreated)
 	http.Redirect(w, r, fmt.Sprintf("%s/%d", showSnipRoute, id), http.StatusSeeOther)
 }
 

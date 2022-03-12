@@ -4,12 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/justinas/nosurf"
+	"github.com/rhodeon/sniphub/cmd/web/internal/session"
 	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
 	"github.com/rhodeon/sniphub/pkg/models"
 	"net/http"
 	"time"
-
-	"github.com/rhodeon/sniphub/pkg/session"
 )
 
 // Renders html template set on screen
