@@ -2,7 +2,7 @@
 
 {{template "base" .}}
 
-{{define "title"}} Latest {{len .Snips}} Snips {{end}}
+{{define "title"}} {{.SelectedUser.Name}} {{end}}
 
 {{define "main"}}
     {{if eq .User.Username .SelectedUser.Name}}
