@@ -15,5 +15,6 @@ type Snip struct {
 type SnipController interface {
 	Insert(user string, title string, content string) (int, error)
 	Get(int) (Snip, error)
-	Latest() ([]Snip, error)
+	Latest(page int) ([]Snip, error)
+	Count() int
 }

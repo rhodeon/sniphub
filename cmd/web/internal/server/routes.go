@@ -30,9 +30,13 @@ func (app *Application) RouteHandler() http.Handler {
 	router.Use(noSurf, app.authenticate)
 
 	// set route handlers
-	router.Get(homeRoute, app.home)
 	router.Get(staticRoute, app.serveStaticFiles)
 	router.Get(userSnipsRoute, app.showUserSnips)
+
+	router.Route(homeRoute, func(r chi.Router) {
+		r.Get("/", app.home)
+		r.Get("/{page:[0-9]+}", app.home)
+	})
 
 	router.Route("/snip", func(r chi.Router) {
 		r.Get("/{id:[0-9]+}", app.showSnip)

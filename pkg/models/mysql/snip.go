@@ -51,12 +51,12 @@ func (c *SnipController) Get(id int) (models.Snip, error) {
 }
 
 // Latest fetches a list of the 10 latest snips from the database.
-func (c *SnipController) Latest() ([]models.Snip, error) {
+func (c *SnipController) Latest(page int) ([]models.Snip, error) {
 	stmt := `SELECT id, user, title, content, created FROM snips
 	ORDER by created DESC
-	LIMIT 10`
+	LIMIT 10 OFFSET ?`
 
-	rows, err := c.Db.Query(stmt)
+	rows, err := c.Db.Query(stmt, page*10)
 	if err != nil {
 		return nil, err
 	}
@@ -85,4 +85,17 @@ func (c *SnipController) Latest() ([]models.Snip, error) {
 		snipValues = append(snipValues, *snip)
 	}
 	return snipValues, nil
+}
+
+func (c *SnipController) Count() int {
+	stmt := `SELECT COUNT(*) FROM snips`
+
+	row := c.Db.QueryRow(stmt)
+	var count *int
+
+	err := row.Scan(&count)
+	if err != nil {
+		return 0
+	}
+	return *count
 }

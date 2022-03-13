@@ -97,7 +97,7 @@ func (app *Application) showUserSnips(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := templates.SelectedUserTemplateData{
+	user := templates.SelectedUserData{
 		Name:  username,
 		Snips: snips,
 	}

@@ -18,11 +18,19 @@ type TemplateData struct {
 
 	// data from database
 	Snip         models.Snip
-	Snips        []models.Snip
-	SelectedUser SelectedUserTemplateData
+	Home         HomePageData
+	SelectedUser SelectedUserData
 }
 
-type SelectedUserTemplateData struct {
+type HomePageData struct {
+	Snips    []models.Snip
+	Current  int
+	Next     int
+	Previous int
+	Last     bool
+}
+
+type SelectedUserData struct {
 	Name  string
 	Snips []models.Snip
 }

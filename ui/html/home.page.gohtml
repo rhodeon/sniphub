@@ -1,4 +1,4 @@
-{{- /*gotype: github.com/rhodeon/sniphub/cmd/web.TemplateData*/ -}}
+{{- /*gotype: github.com/rhodeon/sniphub/cmd/web/internal/templates.TemplateData*/ -}}
 
 {{template "base" .}}
 
@@ -7,22 +7,39 @@
 {{define "main"}}
     <h2>Latest Snips</h2>
 
-    {{if .Snips}}
-        {{range .Snips}}
-            <div class='snippet'>
-                <div class='metadata'>
-                    <strong>{{.Title}}</strong>
-                    <span>#{{.Id}}</span>
+    {{with .Home}}
+        {{if .Snips}}
+            {{range .Snips}}
+                <div class='snippet'>
+                    <div class='metadata'>
+                        <strong>{{.Title}}</strong>
+                        <span>#{{.Id}}</span>
+                    </div>
+
+                    <pre><code>{{.Content}}</code></pre>
+                    <div class='metadata'>
+                        <a href="/user/{{.User}}">{{.User}}</a>
+                        <time>Created: {{formattedDate .Created}}</time>
+                    </div>
                 </div>
 
-                <pre><code>{{.Content}}</code></pre>
-                <div class='metadata'>
-                    <a href="/user/{{.User}}">{{.User}}</a>
-                    <time>Created: {{formattedDate .Created}}</time>
+            {{end}}
+            <center>
+                <div>
+                    {{if .Current}}
+                        {{if gt .Current 1}}
+                            <a href="/{{.Previous}}">Previous</a>
+                        {{else}}
+                            <a href="/">Previous</a>
+                        {{end}}
+                    {{end}}
+                    {{if not .Last}}
+                        <a href="/{{.Next}}">Next</a>
+                    {{end}}
                 </div>
-            </div>
+            </center>
+        {{else}}
+            <p>There's nothing to see here yet!</p>
         {{end}}
-    {{else}}
-        <p>There's nothing to see here yet!</p>
     {{end}}
 {{end}}
