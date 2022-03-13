@@ -66,3 +66,10 @@ func (f *Form) MatchesPattern(field string, pattern *regexp.Regexp) {
 		f.Errors.Add(field, ErrInvalidField)
 	}
 }
+
+// AssertPasswordConfirmation verifies an entered password against its entered confirmation.
+func (f *Form) AssertPasswordConfirmation(password string, confirmation string) {
+	if !(f.Values.Get(password) == f.Values.Get(confirmation)) {
+		f.Errors.Add(confirmation, ErrMismatchedPasswords)
+	}
+}

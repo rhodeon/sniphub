@@ -133,3 +133,42 @@ func (c *UserController) GetSnips(username string) ([]models.Snip, error) {
 	}
 	return snipValues, nil
 }
+
+// ChangePassword compares the entered currentPassword against the hashed password of the user with
+// the id and updates it to the new password if correct.
+func (c *UserController) ChangePassword(id int, currentPassword string, newPassword string) error {
+	// retrieve hashed password for comparison
+	stmt := `SELECT hashed_password FROM users WHERE id = ?`
+	row := c.Db.QueryRow(stmt, id)
+
+	var hashedPassword []byte
+	err := row.Scan(&hashedPassword)
+	if err != nil {
+		return err
+	}
+
+	// compare passwords
+	err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(currentPassword))
+	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			// wrong password
+			return models.ErrInvalidCredentials
+		} else {
+			return err
+		}
+	}
+
+	// update password in database
+	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), 12)
+	if err != nil {
+		return err
+	}
+
+	stmt = `UPDATE users SET hashed_password = ? WHERE id = ?`
+	c.Db.Exec(stmt, newHashedPassword, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

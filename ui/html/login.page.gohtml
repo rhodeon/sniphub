@@ -10,14 +10,18 @@
 
         {{with .Form}}
             {{with .Errors.Get "generic"}}
-                <div class='error'>{{.}}</div> {{end}}
+                <div class='error'>{{.}}</div>
+            {{end}}
             <div>
                 <label>Email:</label>
                 <input type='email' name='email' value='{{.Values.Get "email"}}'>
             </div>
+
             <div>
                 <label>Password:</label>
-                <input type='password' name='password'></div>
+                <input type='password' name='password'>
+            </div>
+
             <div>
                 <input type='submit' value='Log in'>
             </div>

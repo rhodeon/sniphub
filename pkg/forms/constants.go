@@ -2,13 +2,16 @@ package forms
 
 // Fields
 const (
-	Generic   = "generic"
-	Title     = "title"
-	Content   = "content"
-	Username  = "username"
-	Email     = "email"
-	Password  = "password"
-	CsrfToken = "csrf_token"
+	Generic         = "generic"
+	Title           = "title"
+	Content         = "content"
+	Username        = "username"
+	Email           = "email"
+	Password        = "password"
+	CsrfToken       = "csrf_token"
+	CurrentPassword = "current_password"
+	NewPassword     = "new_password"
+	ConfirmPassword = "confirm_password"
 )
 
 // Errors
@@ -18,4 +21,6 @@ const (
 	ErrInvalidEmailOrPassword = "Email or password is incorrect"
 	ErrExistingUsername       = "Username is already taken"
 	ErrExistingEmail          = "Email already in use"
+	ErrIncorrectPassword      = "Incorrect password"
+	ErrMismatchedPasswords    = "Confirmation does not match"
 )

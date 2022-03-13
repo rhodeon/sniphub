@@ -2,6 +2,7 @@ package server
 
 import (
 	"errors"
+	"fmt"
 	"github.com/rhodeon/sniphub/cmd/web/internal/session"
 	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
 	"github.com/rhodeon/sniphub/pkg/forms"
@@ -119,4 +120,63 @@ func (app *Application) logoutUser(w http.ResponseWriter, r *http.Request) {
 	app.SessionManager.Remove(r.Context(), session.KeyUserId)
 	app.SessionManager.Put(r.Context(), session.KeyFlashMessage, session.LogoutSuccessful)
 	http.Redirect(w, r, homeRoute, http.StatusSeeOther)
+}
+
+func (app *Application) changePasswordGet(w http.ResponseWriter, r *http.Request) {
+	app.renderTemplate(w, r, "password.page.gohtml", &templates.TemplateData{Form: forms.New(nil)})
+}
+
+func (app *Application) changePasswordPost(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		clientError(w, http.StatusBadRequest)
+	}
+
+	form := forms.New(r.PostForm)
+	form.Required(forms.CurrentPassword, forms.NewPassword, forms.ConfirmPassword)
+	form.MinLength(10, forms.NewPassword, forms.ConfirmPassword)
+	form.AssertPasswordConfirmation(forms.NewPassword, forms.ConfirmPassword)
+
+	for _, errs := range form.Errors {
+		fmt.Printf("errs: %+v", errs)
+	}
+
+	//reload page with existing errors
+	if !form.Valid() {
+		fmt.Println("bhjbhhbjh")
+		app.renderTemplate(
+			w, r,
+			"password.page.gohtml",
+			&templates.TemplateData{
+				Form: form,
+			},
+		)
+		return
+	}
+
+	userId := app.getUserFromContext(r).Id
+	err = app.Users.ChangePassword(
+		userId,
+		form.Values.Get(forms.CurrentPassword),
+		form.Values.Get(forms.NewPassword),
+	)
+
+	if err != nil {
+		if errors.Is(err, models.ErrInvalidCredentials) {
+			form.Errors.Add(forms.CurrentPassword, forms.ErrIncorrectPassword)
+			app.renderTemplate(
+				w, r,
+				"password.page.gohtml",
+				&templates.TemplateData{
+					Form: form,
+				},
+			)
+		} else {
+			serverError(w, err)
+		}
+		return
+	}
+
+	app.SessionManager.Put(r.Context(), session.KeyFlashMessage, session.PasswordChanged)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
