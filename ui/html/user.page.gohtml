@@ -1,0 +1,46 @@
+{{- /*gotype: github.com/rhodeon/sniphub/cmd/web/internal/templates.TemplateData*/ -}}
+
+{{template "base" .}}
+
+{{define "title"}} {{.SelectedUser.Name}} {{end}}
+
+{{define "main"}}
+    {{if eq .User.Username .SelectedUser.Name}}
+        {{with .User}}
+            <h2>Your Profile</h2>
+
+            <table>
+                <tr>
+                    <td>Username</td>
+                    <td>{{.Username}}</td>
+                </tr>
+
+                <tr>
+                    <td>Email</td>
+                    <td>{{.Email}}</td>
+                </tr>
+
+                <tr>
+                    <td>Joined</td>
+                    <td>{{formattedDate .Created}}</td>
+                </tr>
+            </table>
+        {{end}}
+        <br>
+    {{end}}
+
+    {{if eq .User.Username .SelectedUser.Name}}
+        <h2>Your snips</h2>
+    {{else}}
+        <h2>Snips by {{.SelectedUser.Name}}</h2>
+    {{end}}
+
+    {{if .SelectedUser.Snips}}
+        {{range .SelectedUser.Snips}}
+            {{template "snip" .}}
+            <br>
+        {{end}}
+    {{else}}
+        <p>There's nothing to see here yet!</p>
+    {{end}}
+{{end}}

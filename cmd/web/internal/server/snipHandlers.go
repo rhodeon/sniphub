@@ -102,5 +102,5 @@ func (app *Application) showUserSnips(w http.ResponseWriter, r *http.Request) {
 		Snips: snips,
 	}
 	td := &templates.TemplateData{SelectedUser: user}
-	app.renderTemplate(w, r, "user_snips.page.gohtml", td)
+	app.renderTemplate(w, r, "user.page.gohtml", td)
 }

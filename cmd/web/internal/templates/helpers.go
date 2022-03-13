@@ -26,7 +26,6 @@ func NewTemplateCache(dir string) (map[string]*template.Template, error) {
 		name := filepath.Base(page)
 
 		// associate the template function map with the template set
-		// parse the page template file to a template set
 		ts, err := template.New(name).Funcs(templateFunctions).ParseFiles(page)
 		if err != nil {
 			return nil, err
