@@ -34,3 +34,7 @@ type SelectedUserData struct {
 	Name  string
 	Snips []models.Snip
 }
+
+type SnipData struct {
+	models.Snip
+}

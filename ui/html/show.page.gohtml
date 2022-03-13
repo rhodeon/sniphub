@@ -1,18 +1,9 @@
+{{- /*gotype: github.com/rhodeon/sniphub/cmd/web/internal/templates.TemplateData*/ -}}
+
 {{template "base" .}}
 
 {{define "title"}}Snip #{{.Snip.Id}}{{end}}
 
 {{define "main"}}
-    {{with .Snip}}
-        <div class='snippet'>
-            <div class='metadata'> 
-                <strong>{{.Title}}</strong> 
-                <span>#{{.Id}}</span>
-            </div>
-            <pre><code>{{.Content}}</code></pre>
-            <div class='metadata'>
-                <time>Created: {{formattedDate .Created}}</time>
-            </div>
-        </div>
-    {{end}}
+    {{template "snip" .Snip}}
 {{end}}

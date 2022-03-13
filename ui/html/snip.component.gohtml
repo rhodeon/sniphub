@@ -1,0 +1,21 @@
+{{- /*gotype: github.com/rhodeon/sniphub/cmd/web/internal/templates.SnipData*/ -}}
+
+{{define "snip"}}
+    <div class='snippet'>
+        <div class='metadata'>
+            <a href="/snip/{{.Id}}"><strong>{{.Title}}</strong> </a>
+            <span>#{{.Id}}</span>
+        </div>
+
+        <pre><code>{{.Content}}</code></pre>
+
+        <div class='metadata'>
+            {{if .User}}
+                <code> by <a href="/user/{{.User}}">{{.User}}</a> </code>
+            {{else}}
+                <code>Anonymous</code>
+            {{end}}
+            <time>Created: {{formattedDate .Created}}</time>
+        </div>
+    </div>
+{{end}}

@@ -10,20 +10,10 @@
     {{with .Home}}
         {{if .Snips}}
             {{range .Snips}}
-                <div class='snippet'>
-                    <div class='metadata'>
-                        <strong>{{.Title}}</strong>
-                        <span>#{{.Id}}</span>
-                    </div>
-
-                    <pre><code>{{.Content}}</code></pre>
-                    <div class='metadata'>
-                        <a href="/user/{{.User}}">{{.User}}</a>
-                        <time>Created: {{formattedDate .Created}}</time>
-                    </div>
-                </div>
-
+                {{template "snip" .}}
             {{end}}
+
+            <!-- Page indicators -->
             <div style="text-align: center;">
                 <div>
                     {{if .Current}}

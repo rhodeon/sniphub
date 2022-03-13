@@ -38,8 +38,8 @@ func NewTemplateCache(dir string) (map[string]*template.Template, error) {
 			return nil, err
 		}
 
-		// parse all partial template files to the template set
-		ts, err = ts.ParseGlob(filepath.Join(dir, "*.partial.gohtml"))
+		// parse all component template files to the template set
+		ts, err = ts.ParseGlob(filepath.Join(dir, "*.component.gohtml"))
 		if err != nil {
 			return nil, err
 		}
