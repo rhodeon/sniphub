@@ -24,7 +24,7 @@
                 </div>
 
             {{end}}
-            <center>
+            <div style="text-align: center;">
                 <div>
                     {{if .Current}}
                         {{if gt .Current 1}}
@@ -37,7 +37,7 @@
                         <a href="/{{.Next}}">Next</a>
                     {{end}}
                 </div>
-            </center>
+            </div>
         {{else}}
             <p>There's nothing to see here yet!</p>
         {{end}}
