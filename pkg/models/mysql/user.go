@@ -165,7 +165,7 @@ func (c *UserController) ChangePassword(id int, currentPassword string, newPassw
 	}
 
 	stmt = `UPDATE users SET hashed_password = ? WHERE id = ?`
-	c.Db.Exec(stmt, newHashedPassword, id)
+	_, err = c.Db.Exec(stmt, newHashedPassword, id)
 	if err != nil {
 		return err
 	}

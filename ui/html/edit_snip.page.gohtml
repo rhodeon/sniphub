@@ -1,0 +1,33 @@
+{{- /*gotype: github.com/rhodeon/sniphub/cmd/web/internal/templates.TemplateData*/ -}}
+
+{{template "base" .}}
+
+{{define "title"}} Edit Snip {{end}}
+
+{{define "main"}}
+    <form action='/snip/edit/{{.Snip.Id}}' method='POST'>
+        <input name='csrf_token' type='hidden' value='{{.CsrfToken}}'>
+
+        {{with .Form}}
+            <div>
+                <label>Title:</label>
+                <input type='text' name='title' value='{{.Values.Get "title"}}'>
+                {{with .Errors.Get "title"}}
+                    <label class='error'>{{.}}</label>
+                {{end}}
+            </div>
+
+            <div>
+                <label>Content:</label>
+                <textarea name='content'>{{.Values.Get "content"}}</textarea>
+                {{with .Errors.Get "content"}}
+                    <label class='error'>{{.}}</label>
+                {{end}}
+            </div>
+
+            <div>
+                <input type='submit' value='Edit Snip'>
+            </div>
+        {{end}}
+    </form>
+{{end}}

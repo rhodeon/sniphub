@@ -87,15 +87,27 @@ func (c *SnipController) Latest(page int) ([]models.Snip, error) {
 	return snipValues, nil
 }
 
+// Count returns the number of created snips.
 func (c *SnipController) Count() int {
 	stmt := `SELECT COUNT(*) FROM snips`
 
 	row := c.Db.QueryRow(stmt)
-	var count *int
+	var count int
 
 	err := row.Scan(&count)
 	if err != nil {
 		return 0
 	}
-	return *count
+	return count
+}
+
+// Update replaces the title and content of the snip with the given id.
+func (c *SnipController) Update(id int, title string, content string) error {
+	stmt := `UPDATE snips SET title = ?, content = ? WHERE id = ?`
+
+	_, err := c.Db.Exec(stmt, title, content, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

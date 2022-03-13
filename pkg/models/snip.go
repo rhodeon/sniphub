@@ -17,4 +17,5 @@ type SnipController interface {
 	Get(int) (Snip, error)
 	Latest(page int) ([]Snip, error)
 	Count() int
+	Update(id int, title string, content string) error
 }

@@ -5,4 +5,5 @@ const (
 	RegistrationSuccessful = "Registration successful! Please login."
 	LogoutSuccessful       = "You've been logged out successfully!"
 	PasswordChanged        = "Password changed successfully!"
+	SnipEdited             = "Snip successfully edited!"
 )

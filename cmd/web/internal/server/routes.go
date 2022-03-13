@@ -13,6 +13,7 @@ const (
 
 	showSnipRoute   = "/snip"
 	createSnipRoute = "/snip/create"
+	editSnipRoute   = "/snip/edit/{id:[0-9]+}"
 	userSnipsRoute  = "/user/{username}"
 
 	signupRoute         = "/auth/signup"
@@ -43,6 +44,8 @@ func (app *Application) RouteHandler() http.Handler {
 		r.Get("/{id:[0-9]+}", app.showSnip)
 		r.Get("/create", app.createSnipGet)
 		r.Post("/create", app.createSnipPost)
+		r.Get("/edit/{id:[0-9]+}", app.editSnipGet)
+		r.Post("/edit/{id:[0-9]+}", app.editSnipPost)
 	})
 
 	router.Route("/auth", func(r chi.Router) {
