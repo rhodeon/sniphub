@@ -18,4 +18,5 @@ type SnipController interface {
 	Latest(page int) ([]Snip, error)
 	Count() int
 	Update(id int, title string, content string) error
+	Clone(id int, user string) (int, error)
 }

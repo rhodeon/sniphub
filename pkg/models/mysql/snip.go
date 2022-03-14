@@ -111,3 +111,22 @@ func (c *SnipController) Update(id int, title string, content string) error {
 	}
 	return nil
 }
+
+// Clone makes a copy of the snip with the given id,
+// changing the author and the creation date.
+func (c *SnipController) Clone(id int, user string) (int, error) {
+	stmt := `INSERT INTO snips (user, title, content, created)
+	SELECT ?, title, content, UTC_TIMESTAMP FROM snips
+	WHERE id = ?`
+
+	result, err := c.Db.Exec(stmt, user, id)
+	if err != nil {
+		return 0, err
+	}
+
+	clonedId, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	return int(clonedId), nil
+}

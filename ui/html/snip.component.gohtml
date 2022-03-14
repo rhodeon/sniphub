@@ -9,18 +9,26 @@
 
         <pre><code>{{.Content}}</code></pre>
 
-        <div class='metadata'>
+        <div class="metadata">
             {{if .User}}
                 <code> by <a href="/user/{{.User}}">{{.User}}</a> </code>
             {{else}}
                 <code>Anonymous</code>
             {{end}}
 
+            <time>Created: {{formattedDate .Created}}</time>
+        </div>
+
+        <div class="metadata">
             {{if .IsAuthor}}
-                <a href="/snip/edit/{{.Id}}">[Edit]</a>
+                <a href="/snip/edit/{{.Id}}" >[Edit]</a>
             {{end}}
 
-            <time>Created: {{formattedDate .Created}}</time>
+            <form action='/snip/clone' method='POST' >
+                <input name='csrf_token' type='hidden' value='{{.CsrfToken}}'>
+                <input name="id" type="hidden" value="{{.Id}}">
+                <button>[Clone]</button>
+            </form>
         </div>
     </div>
 {{end}}

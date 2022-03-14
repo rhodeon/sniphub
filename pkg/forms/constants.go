@@ -12,6 +12,7 @@ const (
 	CurrentPassword = "current_password"
 	NewPassword     = "new_password"
 	ConfirmPassword = "confirm_password"
+	SnipId          = "id"
 )
 
 // Errors

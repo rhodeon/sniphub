@@ -188,3 +188,30 @@ func (app *Application) editSnipPost(w http.ResponseWriter, r *http.Request) {
 	app.SessionManager.Put(r.Context(), session.KeyFlashMessage, session.SnipEdited)
 	http.Redirect(w, r, path.Join(showSnipRoute, strconv.Itoa(id)), http.StatusSeeOther)
 }
+
+// cloneSnipPost makes a copy of the snip with the given id,
+// with the details of the authenticated user.
+func (app *Application) cloneSnipPost(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		clientError(w, http.StatusBadRequest)
+	}
+
+	id, err := strconv.Atoi(r.PostFormValue(forms.SnipId))
+	if err != nil {
+		notFoundError(w)
+	}
+
+	// clone snip and fetch new id for display
+	clonedId, err := app.Snips.Clone(
+		id,
+		app.getUserFromContext(r).Username,
+	)
+	if err != nil {
+		serverError(w, err)
+	}
+
+	// redirect to cloned snip
+	app.SessionManager.Put(r.Context(), session.KeyFlashMessage, session.SnipCloned)
+	http.Redirect(w, r, path.Join(showSnipRoute, strconv.Itoa(clonedId)), http.StatusSeeOther)
+}
