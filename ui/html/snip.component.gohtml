@@ -16,7 +16,10 @@
                 <code>Anonymous</code>
             {{end}}
 
-            <a href="/snip/edit/{{.Id}}">[Edit]</a>
+            {{if .IsAuthor}}
+                <a href="/snip/edit/{{.Id}}">[Edit]</a>
+            {{end}}
+
             <time>Created: {{formattedDate .Created}}</time>
         </div>
     </div>

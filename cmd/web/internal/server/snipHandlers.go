@@ -125,6 +125,12 @@ func (app *Application) editSnipGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// return an error if the client is unauthorized to edit snip
+	if app.getUserFromContext(r).Username != snip.User {
+		clientError(w, http.StatusUnauthorized)
+		return
+	}
+
 	app.renderTemplate(w, r, "edit_snip.page.gohtml", &templates.TemplateData{
 		Form: &forms.Form{
 			Values: url.Values{
