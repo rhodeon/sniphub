@@ -1,6 +1,7 @@
 package templates
 
 import (
+	"github.com/rhodeon/sniphub/pkg/models"
 	"html/template"
 	"path/filepath"
 	"time"
@@ -8,6 +9,7 @@ import (
 
 var templateFunctions = template.FuncMap{
 	"formattedDate": formattedDate,
+	"embedIntoSnip": embedIntoSnip,
 }
 
 // NewTemplateCache caches templates for rendering pages.
@@ -59,4 +61,14 @@ func formattedDate(t time.Time) string {
 
 	// convert time to UTC before formatting
 	return t.UTC().Format("Jan 02, 2006 at 15:04")
+}
+
+// embedIntoSnip inserts the csrf token and authorship status which are needed
+// in the snip data.
+func embedIntoSnip(csrfToken string, username string, snip models.Snip) SnipData {
+	snipData := SnipData{snip, false, csrfToken}
+	if username == snip.User {
+		snipData.IsAuthor = true
+	}
+	return snipData
 }

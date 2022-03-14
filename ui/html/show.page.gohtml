@@ -5,5 +5,6 @@
 {{define "title"}}Snip #{{.Snip.Id}}{{end}}
 
 {{define "main"}}
-    {{template "snip" .Snip}}
+    {{$snipData := embedIntoSnip .CsrfToken .User.Username .Snip}}
+    {{template "snip" $snipData}}
 {{end}}

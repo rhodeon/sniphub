@@ -7,10 +7,13 @@
 {{define "main"}}
     <h2>Latest Snips</h2>
 
+    {{$username := .User.Username}}
+    {{$csrfToken := .CsrfToken}}
     {{with .Home}}
         {{if .Snips}}
             {{range .Snips}}
-                {{template "snip" .}}
+                {{$snipData := embedIntoSnip $csrfToken $username .}}
+                {{template "snip" $snipData}}
                 <br>
             {{end}}
 

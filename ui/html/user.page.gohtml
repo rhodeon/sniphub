@@ -40,9 +40,12 @@
         <h2>Snips by {{.SelectedUser.Name}}</h2>
     {{end}}
 
+    {{$username := .User.Username}}
+    {{$csrfToken := .CsrfToken}}
     {{if .SelectedUser.Snips}}
         {{range .SelectedUser.Snips}}
-            {{template "snip" .}}
+            {{$snipData := embedIntoSnip $csrfToken $username .}}
+            {{template "snip" $snipData}}
             <br>
         {{end}}
     {{else}}
