@@ -52,6 +52,7 @@ func (app *Application) createSnipPost(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		clientError(w, http.StatusBadRequest)
+		return
 	}
 
 	// validate title and content
@@ -154,6 +155,7 @@ func (app *Application) editSnipPost(w http.ResponseWriter, r *http.Request) {
 	err = r.ParseForm()
 	if err != nil {
 		clientError(w, http.StatusBadRequest)
+		return
 	}
 
 	// validate title and content
@@ -195,11 +197,13 @@ func (app *Application) cloneSnipPost(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		clientError(w, http.StatusBadRequest)
+		return
 	}
 
 	id, err := strconv.Atoi(r.PostFormValue(forms.SnipId))
 	if err != nil {
 		notFoundError(w)
+		return
 	}
 
 	// clone snip and fetch new id for display
@@ -209,6 +213,7 @@ func (app *Application) cloneSnipPost(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		serverError(w, err)
+		return
 	}
 
 	// redirect to cloned snip

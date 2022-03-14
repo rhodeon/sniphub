@@ -7,4 +7,5 @@ const (
 	PasswordChanged        = "Password changed successfully!"
 	SnipEdited             = "Snip edited successfully!"
 	SnipCloned             = "Snip cloned successfully!"
+	LoginPrompt            = "Login to perform this action"
 )

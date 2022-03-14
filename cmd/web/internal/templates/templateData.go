@@ -37,6 +37,7 @@ type SelectedUserData struct {
 
 type SnipData struct {
 	models.Snip
-	IsAuthor  bool
-	CsrfToken string
+	IsAuthenticated bool
+	IsAuthor        bool
+	CsrfToken       string
 }

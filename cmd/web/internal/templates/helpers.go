@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"path/filepath"
 	"time"
+	"unicode/utf8"
 )
 
 var templateFunctions = template.FuncMap{
@@ -66,9 +67,16 @@ func formattedDate(t time.Time) string {
 // embedIntoSnip inserts the csrf token and authorship status which are needed
 // in the snip data.
 func embedIntoSnip(csrfToken string, username string, snip models.Snip) SnipData {
-	snipData := SnipData{snip, false, csrfToken}
-	if username == snip.User {
-		snipData.IsAuthor = true
+	snipData := SnipData{snip, false, false, csrfToken}
+
+	// set authentication and authorship status
+	if utf8.RuneCountInString(username) != 0 {
+		snipData.IsAuthenticated = true
+
+		if username == snip.User {
+			snipData.IsAuthor = true
+		}
 	}
+
 	return snipData
 }

@@ -45,9 +45,13 @@ func (app *Application) RouteHandler() http.Handler {
 		r.Get("/{id:[0-9]+}", app.showSnip)
 		r.Get("/create", app.createSnipGet)
 		r.Post("/create", app.createSnipPost)
-		r.Get("/edit/{id:[0-9]+}", app.editSnipGet)
-		r.Post("/edit/{id:[0-9]+}", app.editSnipPost)
-		r.Post("/clone", app.cloneSnipPost)
+
+		r.Group(func(r chi.Router) {
+			r.Use(app.requireAuthentication)
+			r.Post("/clone", app.cloneSnipPost)
+			r.Get("/edit/{id:[0-9]+}", app.editSnipGet)
+			r.Post("/edit/{id:[0-9]+}", app.editSnipPost)
+		})
 	})
 
 	router.Route("/auth", func(r chi.Router) {
