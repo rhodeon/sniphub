@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"unicode"
 	"unicode/utf8"
 )
 
@@ -71,5 +72,14 @@ func (f *Form) MatchesPattern(field string, pattern *regexp.Regexp) {
 func (f *Form) AssertPasswordConfirmation(password string, confirmation string) {
 	if !(f.Values.Get(password) == f.Values.Get(confirmation)) {
 		f.Errors.Add(confirmation, ErrMismatchedPasswords)
+	}
+}
+
+func (f *Form) NoWhiteSpace(field string) {
+	value := f.Values.Get(field)
+	for _, char := range value {
+		if unicode.IsSpace(char) {
+			f.Errors.Add(field, ErrWhitespace)
+		}
 	}
 }

@@ -26,6 +26,7 @@ func (app *Application) signupUserPost(w http.ResponseWriter, r *http.Request) {
 	form := forms.New(r.PostForm)
 	form.Required(forms.Username, forms.Email, forms.Password)
 	form.MaxLength(255, forms.Username, forms.Email)
+	form.NoWhiteSpace(forms.Username)
 	form.MatchesPattern(forms.Email, forms.EmailRX)
 	form.MinLength(10, forms.Password)
 

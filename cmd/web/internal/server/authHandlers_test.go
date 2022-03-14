@@ -38,6 +38,7 @@ func TestApplication_signupUserPost(t *testing.T) {
 		{"password below minimum length", "rhodeon", "rhodeon@mail.com", "pass", csrfToken, http.StatusOK, "This field must have at least 10 characters"},
 		{"username already exists", "rhodeon", "ruona@mail.com", "passworder", csrfToken, http.StatusOK, forms.ErrExistingUsername},
 		{"email already exists", "ruona", "rhodeon@mail.com", "passworder", csrfToken, http.StatusOK, forms.ErrExistingEmail},
+		{"username with whitespace", "rho deon", "rhodeon@mail.com", "passworder", csrfToken, http.StatusOK, forms.ErrWhitespace},
 	}
 
 	for _, tt := range tests {
