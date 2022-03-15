@@ -12,6 +12,7 @@
             <div>
                 <label for="title">Title:</label>
                 <input id="title" name='title' type='text' value='{{.Values.Get "title"}}'>
+
                 {{with .Errors.Get "title"}}
                     <label class='error'>{{.}}</label>
                 {{end}}
@@ -20,6 +21,7 @@
             <div>
                 <label for="content">Content:</label>
                 <textarea id="content" name='content'>{{.Values.Get "content"}}</textarea>
+
                 {{with .Errors.Get "content"}}
                     <label class='error'>{{.}}</label>
                 {{end}}

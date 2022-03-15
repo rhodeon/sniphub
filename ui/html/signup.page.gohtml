@@ -11,26 +11,29 @@
         {{with .Form}}
             <div>
                 <label for="username">Username:</label>
-                {{with .Errors.Get "username"}}
-                    <label class='error'>{{.}}</label>
-                {{end}}
                 <input id="username" name='username' type='text' value='{{.Values.Get "username"}}'>
+
+                {{with .Errors.Get "username"}}
+                    <label for="username" class='error'>{{.}}</label>
+                {{end}}
             </div>
 
             <div>
                 <label for="email">Email:</label>
-                {{with .Errors.Get "email"}}
-                    <label class='error'>{{.}}</label>
-                {{end}}
                 <input id="email" name='email' type='email' value='{{.Values.Get "email"}}'>
+
+                {{with .Errors.Get "email"}}
+                    <label class='error' for="email">{{.}}</label>
+                {{end}}
             </div>
 
             <div>
                 <label for="password">Password:</label>
+                <input id="password" name='password' type='password'>
+
                 {{with .Errors.Get "password"}}
                     <label class='error'>{{.}}</label>
                 {{end}}
-                <input id="password" name='password' type='password'>
             </div>
 
             <div>
