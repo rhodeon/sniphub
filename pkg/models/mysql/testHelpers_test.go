@@ -12,7 +12,7 @@ import (
 func newTestDb(t *testing.T) (*sql.DB, func()) {
 	t.Helper()
 
-	db, err := sql.Open("mysql", "test_web:password@/test_sniphub?parseTime=true&multiStatements=true")
+	db, err := sql.Open("mysql", "web_test:password@/sniphub_test?parseTime=true&multiStatements=true")
 	testhelpers.AssertFatalError(t, err)
 
 	// create tables
