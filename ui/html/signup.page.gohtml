@@ -1,28 +1,41 @@
 {{- /*gotype: github.com/rhodeon/sniphub/cmd/web.TemplateData*/ -}}
 
 {{template "base" .}}
+
 {{define "title"}}Signup{{end}}
+
 {{define "main"}}
     <form action='/auth/signup' method='POST' novalidate>
         <input name='csrf_token' type='hidden' value='{{.CsrfToken}}'>
 
         {{with .Form}}
             <div>
-                <label>Username:</label>
+                <label for="username">Username:</label>
                 {{with .Errors.Get "username"}}
-                    <label class='error'>{{.}}</label> {{end}}
-                <input type='text' name='username' value='{{.Values.Get "username"}}'></div>
+                    <label class='error'>{{.}}</label>
+                {{end}}
+                <input id="username" name='username' type='text' value='{{.Values.Get "username"}}'>
+            </div>
+
             <div>
-                <label>Email:</label>
+                <label for="email">Email:</label>
                 {{with .Errors.Get "email"}}
-                    <label class='error'>{{.}}</label> {{end}}
-                <input type='email' name='email' value='{{.Values.Get "email"}}'></div>
+                    <label class='error'>{{.}}</label>
+                {{end}}
+                <input id="email" name='email' type='email' value='{{.Values.Get "email"}}'>
+            </div>
+
             <div>
-                <label>Password:</label>
+                <label for="password">Password:</label>
                 {{with .Errors.Get "password"}}
-                    <label class='error'>{{.}}</label> {{end}}
-                <input type='password' name='password'></div>
+                    <label class='error'>{{.}}</label>
+                {{end}}
+                <input id="password" name='password' type='password'>
+            </div>
+
             <div>
                 <input type='submit' value='Register'>
-            </div> {{end}}
-    </form> {{end}}
+            </div>
+        {{end}}
+    </form>
+{{end}}

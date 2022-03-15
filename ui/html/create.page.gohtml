@@ -5,29 +5,31 @@
 {{define "title"}} Create a New Snip {{end}}
 
 {{define "main"}}
-<form action='/snip/create' method='POST'>
-    <input name='csrf_token' type='hidden' value='{{.CsrfToken}}'>
+    <form action='/snip/create' method='POST'>
+        <input name='csrf_token' type='hidden' value='{{.CsrfToken}}'>
 
-    {{with .Form}}
-        <div>
-            <label>Title:</label>
-            <input type='text' name='title' value='{{.Values.Get "title"}}'>
+        {{with .Form}}
+            <div>
+                <label for="title">Title:</label>
+                <input id="title" name='title' type='text' value='{{.Values.Get "title"}}'>
 
-            {{with .Errors.Get "title"}}
-            <label class='error'>{{.}}</label>
-            {{end}}
-        </div>
-        <div>
-            <label>Content:</label>
-            <textarea name='content'>{{.Values.Get "content"}}</textarea>
-            
-            {{with .Errors.Get "content"}}
-            <label class='error'>{{.}}</label>
-            {{end}}
-        </div>
-        <div>
-            <input type='submit' value='Publish Snip'>
-        </div>
-    {{end}}
-</form>
+                {{with .Errors.Get "title"}}
+                    <label class='error'>{{.}}</label>
+                {{end}}
+            </div>
+
+            <div>
+                <label for="content">Content:</label>
+                <textarea id="content" name='content'>{{.Values.Get "content"}}</textarea>
+
+                {{with .Errors.Get "content"}}
+                    <label class='error'>{{.}}</label>
+                {{end}}
+            </div>
+
+            <div>
+                <input type='submit' value='Publish Snip'>
+            </div>
+        {{end}}
+    </form>
 {{end}}
