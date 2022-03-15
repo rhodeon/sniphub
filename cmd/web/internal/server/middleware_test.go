@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"github.com/rhodeon/sniphub/pkg/testhelpers"
 	"io"
 	"net/http"
@@ -67,14 +66,11 @@ func TestApplication_requireAuthentication(t *testing.T) {
 			req, err := http.NewRequest(http.MethodGet, homeRoute, nil)
 			testhelpers.AssertFatalError(t, err)
 
-			if tt.isAuthenticated {
-				// emulate logged in user
-				ctx := context.WithValue(req.Context(), ContextKeyIsAuthenticated, true)
-				req = req.WithContext(ctx)
-			}
+			// provide session and authentication before calling middleware
+			loadTestSession(t, req, app.SessionManager)
+			authenticateTestUser(t, req, tt.isAuthenticated)
 
-			// loadAndSave initializes the session needed by requireAuthentication
-			app.SessionManager.LoadAndSave(app.requireAuthentication(mockHandler)).ServeHTTP(rr, req)
+			app.requireAuthentication(mockHandler).ServeHTTP(rr, req)
 			rs := rr.Result()
 
 			// assert status code

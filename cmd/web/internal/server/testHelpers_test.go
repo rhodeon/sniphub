@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"github.com/alexedwards/scs/v2"
 	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
 	"github.com/rhodeon/sniphub/pkg/models/mock"
@@ -109,4 +110,32 @@ func extractCSRFToken(t *testing.T, body []byte) string {
 type testHeader struct {
 	key   string
 	value string
+}
+
+// loadTestSession provides a session for handlers to be tested, without
+// requiring the SessionManager.LoadAndSave middleware.
+func loadTestSession(t *testing.T, r *http.Request, s *scs.SessionManager) {
+	t.Helper()
+
+	var token string
+	cookie, err := r.Cookie(s.Cookie.Name)
+	if err == nil {
+		token = cookie.Value
+	}
+
+	ctx, err := s.Load(r.Context(), token)
+	testhelpers.AssertFatalError(t, err)
+
+	*r = *r.WithContext(ctx)
+}
+
+// authenticateTestUser sets the test request with an authenticated context
+// if authenticate is true.
+func authenticateTestUser(t *testing.T, r *http.Request, authenticate bool) {
+	t.Helper()
+
+	if authenticate {
+		ctx := context.WithValue(r.Context(), ContextKeyIsAuthenticated, true)
+		*r = *r.WithContext(ctx)
+	}
 }
