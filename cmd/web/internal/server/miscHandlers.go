@@ -5,7 +5,7 @@ import (
 	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
 	"net/http"
 	"strconv"
-	"unicode/utf8"
+	"strings"
 )
 
 // home is the default home handler. It shows the latest 10 snips in descending order of date.
@@ -13,7 +13,7 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 	pageParam := chi.URLParam(r, "page")
 
 	// ensure the root path has a page of 0
-	if utf8.RuneCountInString(pageParam) == 0 {
+	if strings.TrimSpace(pageParam) == "" {
 		pageParam = "0"
 	}
 

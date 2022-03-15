@@ -4,8 +4,8 @@ import (
 	"github.com/rhodeon/sniphub/pkg/models"
 	"html/template"
 	"path/filepath"
+	"strings"
 	"time"
-	"unicode/utf8"
 )
 
 var templateFunctions = template.FuncMap{
@@ -70,7 +70,7 @@ func embedIntoSnip(csrfToken string, username string, snip models.Snip) SnipData
 	snipData := SnipData{snip, false, false, csrfToken}
 
 	// set authentication and authorship status
-	if utf8.RuneCountInString(username) != 0 {
+	if strings.TrimSpace(username) != "" {
 		snipData.IsAuthenticated = true
 
 		if username == snip.User {
