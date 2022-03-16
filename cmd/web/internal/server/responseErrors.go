@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"github.com/rhodeon/sniphub/pkg/prettylog"
+	"github.com/rhodeon/prettylog"
 	"net/http"
 	"runtime/debug"
 )

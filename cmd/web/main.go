@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"github.com/alexedwards/scs/mysqlstore"
+	"github.com/rhodeon/prettylog"
 	server2 "github.com/rhodeon/sniphub/cmd/web/internal/server"
 	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
 	"net/http"
@@ -11,7 +12,6 @@ import (
 	"github.com/alexedwards/scs/v2"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/rhodeon/sniphub/pkg/models/mysql"
-	"github.com/rhodeon/sniphub/pkg/prettylog"
 )
 
 func main() {

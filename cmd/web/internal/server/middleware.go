@@ -5,11 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/justinas/nosurf"
+	"github.com/rhodeon/prettylog"
 	"github.com/rhodeon/sniphub/cmd/web/internal/session"
 	"github.com/rhodeon/sniphub/pkg/models"
 	"net/http"
-
-	"github.com/rhodeon/sniphub/pkg/prettylog"
 )
 
 // requireAuthentication redirects a user to the login page if they aren't logged in.
