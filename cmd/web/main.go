@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"github.com/alexedwards/scs/mysqlstore"
 	"github.com/rhodeon/prettylog"
-	server2 "github.com/rhodeon/sniphub/cmd/web/internal/server"
+	"github.com/rhodeon/sniphub/cmd/web/internal/server"
 	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
 	"net/http"
 	"time"
@@ -39,14 +39,14 @@ func main() {
 	sessionManager.Cookie.Secure = true
 	sessionManager.Cookie.SameSite = http.SameSiteStrictMode
 
-	app := server2.Application{
+	app := server.Application{
 		TemplateCache:  templateCache,
 		SessionManager: sessionManager,
 		Snips:          &mysql.SnipController{Db: db},
 		Users:          &mysql.UserController{Db: db},
 	}
 
-	server := &http.Server{
+	srv := &http.Server{
 		Addr:         sessionFlags.addr,
 		Handler:      app.RouteHandler(),
 		IdleTimeout:  1 * time.Minute,
@@ -56,7 +56,7 @@ func main() {
 
 	// start server
 	prettylog.InfoF("Starting server on %s", sessionFlags.addr)
-	err = server.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	prettylog.Error(err.Error())
 }
 
