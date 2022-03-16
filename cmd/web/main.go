@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"github.com/alexedwards/scs/mysqlstore"
 	"github.com/rhodeon/prettylog"
 	"github.com/rhodeon/sniphub/cmd/web/internal/server"
@@ -45,9 +46,15 @@ func main() {
 		Users:          &mysql.UserController{Db: db},
 	}
 
+	tlsConfig := &tls.Config{
+		PreferServerCipherSuites: true,
+		CurvePreferences:         []tls.CurveID{tls.X25519, tls.CurveP256},
+	}
+
 	srv := &http.Server{
 		Addr:         sessionFlags.addr,
 		Handler:      app.RouteHandler(),
+		TLSConfig:    tlsConfig,
 		IdleTimeout:  1 * time.Minute,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
