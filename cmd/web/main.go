@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"github.com/alexedwards/scs/mysqlstore"
 	"github.com/rhodeon/prettylog"
 	"github.com/rhodeon/sniphub/cmd/web/internal/server"
@@ -58,19 +57,4 @@ func main() {
 	prettylog.InfoF("Starting server on %s", sessionFlags.addr)
 	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	prettylog.Error(err.Error())
-}
-
-func openDb(dsn string) (*sql.DB, error) {
-	db, err := sql.Open("mysql", dsn)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// establish a connection to the database
-	if err = db.Ping(); err != nil {
-		return nil, err
-	}
-
-	return db, nil
 }
