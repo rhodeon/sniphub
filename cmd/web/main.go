@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
-	_ "github.com/go-sql-driver/mysql"
+	sqlDriver "github.com/go-sql-driver/mysql"
 	"github.com/rhodeon/sniphub/pkg/models/mysql"
 )
 
@@ -20,7 +20,17 @@ func main() {
 	sessionFlags.parse()
 
 	// initiate database connection
-	dsn := sessionFlags.sqlUser + ":" + sessionFlags.sqlPassword + "@/" + sessionFlags.sqlDb + "?parseTime=true"
+	dbConfig := &sqlDriver.Config{
+		DBName:               sessionFlags.sqlDb,
+		User:                 sessionFlags.sqlUser,
+		Passwd:               sessionFlags.sqlPassword,
+		Addr:                 sessionFlags.sqlAddr,
+		Net:                  "tcp",
+		AllowNativePasswords: true,
+		ParseTime:            true,
+	}
+
+	dsn := dbConfig.FormatDSN()
 	db, err := openDb(dsn)
 	if err != nil {
 		prettylog.FatalError(err.Error())
