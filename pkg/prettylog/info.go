@@ -19,21 +19,21 @@ func colorizeInfo(logInfo func(), info ...interface{}) {
 	fmt.Fprint(os.Stdout, colors.Reset)
 }
 
-// Equivalent to fmt.Print.
+// Info is equivalent to fmt.Print.
 func Info(info ...interface{}) {
 	colorizeInfo(func() {
 		infoLogger.Print(info...)
 	}, info...)
 }
 
-// Equivalent to fmt.Printf.
+// InfoF is equivalent to fmt.Printf.
 func InfoF(format string, info ...interface{}) {
 	colorizeInfo(func() {
 		infoLogger.Printf(format, info...)
 	})
 }
 
-// Equivalent to fmt.Println.
+// InfoLn is equivalent to fmt.Println.
 func InfoLn(format string, info ...interface{}) {
 	colorizeInfo(func() {
 		infoLogger.Println(info...)

@@ -19,7 +19,7 @@ func colorizeError(logError func(), error ...interface{}) {
 	fmt.Fprint(os.Stderr, colors.Reset)
 }
 
-// Equivalent to fmt.Print.
+// Error is equivalent to fmt.Print.
 func Error(error ...interface{}) {
 	colorizeError(func() {
 		errorLogger.Print(error...)
@@ -27,21 +27,21 @@ func Error(error ...interface{}) {
 	)
 }
 
-// Equivalent to fmt.PrintF.
+// ErrorF is equivalent to fmt.PrintF.
 func ErrorF(format string, error ...interface{}) {
 	colorizeError(func() {
 		errorLogger.Printf(format, error...)
 	})
 }
 
-// Equivalent to fmt.PrintLn.
+// ErrorLn is equivalent to fmt.PrintLn.
 func ErrorLn(error ...interface{}) {
 	colorizeError(func() {
 		errorLogger.Println(error...)
 	})
 }
 
-// Logs the error then exits the program.
+// FatalError logs the error then exits the program.
 func FatalError(error ...interface{}) {
 	colorizeError(func() {
 		errorLogger.Fatal(error...)
