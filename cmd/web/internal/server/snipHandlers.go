@@ -18,7 +18,7 @@ import (
 func (app *Application) showSnip(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil || id < 0 {
-		notFoundError(w)
+		notFoundError(w, r)
 		return
 	}
 
@@ -27,7 +27,7 @@ func (app *Application) showSnip(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// return a 404 error if the id matches none in the database
 		if errors.Is(err, models.ErrNoRecord) {
-			notFoundError(w)
+			notFoundError(w, r)
 		} else {
 			serverError(w, err)
 		}
@@ -110,7 +110,7 @@ func (app *Application) showUserSnips(w http.ResponseWriter, r *http.Request) {
 func (app *Application) editSnipGet(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil || id < 0 {
-		notFoundError(w)
+		notFoundError(w, r)
 		return
 	}
 
@@ -119,7 +119,7 @@ func (app *Application) editSnipGet(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// return a 404 error if the id matches none in the database
 		if errors.Is(err, models.ErrNoRecord) {
-			notFoundError(w)
+			notFoundError(w, r)
 		} else {
 			serverError(w, err)
 		}
@@ -147,7 +147,7 @@ func (app *Application) editSnipGet(w http.ResponseWriter, r *http.Request) {
 func (app *Application) editSnipPost(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil || id < 0 {
-		notFoundError(w)
+		notFoundError(w, r)
 		return
 	}
 
@@ -202,7 +202,7 @@ func (app *Application) cloneSnipPost(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.Atoi(r.PostFormValue(forms.SnipId))
 	if err != nil {
-		notFoundError(w)
+		notFoundError(w, r)
 		return
 	}
 

@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"github.com/rhodeon/sniphub/pkg/forms"
 	"github.com/rhodeon/sniphub/pkg/testhelpers"
 	"net/http"
@@ -21,8 +20,8 @@ func TestApplication_showSnip(t *testing.T) {
 		wantBody string
 	}{
 		{"valid id", "/snip/1", 200, "this is a mock snip"},
-		{"zero id", "/snip/0", 404, fmt.Sprintln(http.StatusText(http.StatusNotFound))},
-		{"id out of range", "/snip/10", 404, fmt.Sprintln(http.StatusText(http.StatusNotFound))},
+		{"zero id", "/snip/0", 404, ErrPageNotFound},
+		{"id out of range", "/snip/10", 404, ErrPageNotFound},
 	}
 
 	for _, tt := range tests {

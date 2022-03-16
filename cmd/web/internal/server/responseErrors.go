@@ -7,6 +7,8 @@ import (
 	"runtime/debug"
 )
 
+const ErrPageNotFound = "404 page not found"
+
 // Prints stacktrace and sends internal server error to user.
 func serverError(w http.ResponseWriter, err error) {
 	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
@@ -18,6 +20,6 @@ func clientError(w http.ResponseWriter, status int) {
 	http.Error(w, http.StatusText(status), status)
 }
 
-func notFoundError(w http.ResponseWriter) {
-	http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+func notFoundError(w http.ResponseWriter, r *http.Request) {
+	http.NotFound(w, r)
 }
