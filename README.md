@@ -1,6 +1,6 @@
 # sniphub
-Sniphub is a text repository service.
+Sniphub is an append-only text repository service.
 
-It allows users to create, edit and clone snips.
+Users can create, edit and clone, but not delete snips.
 
 [Live link](https://sniphub-web.herokuapp.com) 
