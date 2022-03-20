@@ -6,6 +6,7 @@ import (
 	"github.com/rhodeon/prettylog"
 	"github.com/rhodeon/sniphub/cmd/web/internal/server"
 	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
+	"github.com/rhodeon/sniphub/pkg/mailer"
 	"net/http"
 	"time"
 
@@ -18,6 +19,10 @@ func main() {
 	// configure sessionFlags
 	sessionFlags := flags{}
 	sessionFlags.parse()
+	err := sessionFlags.validate()
+	if err != nil {
+		prettylog.FatalError(err)
+	}
 
 	// initiate database connection
 	dbConfig := &sqlDriver.Config{
@@ -49,9 +54,12 @@ func main() {
 	sessionManager.Cookie.Secure = true
 	sessionManager.Cookie.SameSite = http.SameSiteStrictMode
 
+	sessionMailer := mailer.New(sessionFlags.smtpHost, sessionFlags.smtpPort, sessionFlags.smtpUser, sessionFlags.smtpPass)
+
 	app := server.Application{
 		TemplateCache:  templateCache,
 		SessionManager: sessionManager,
+		Mailer:         sessionMailer,
 		Snips:          &mysql.SnipController{Db: db},
 		Users:          &mysql.UserController{Db: db},
 	}

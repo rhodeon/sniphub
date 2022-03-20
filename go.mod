@@ -14,4 +14,12 @@ require github.com/justinas/nosurf v1.1.1
 
 require github.com/alexedwards/scs/mysqlstore v0.0.0-20220216073957-c252878bcf5a
 
-require github.com/rhodeon/prettylog v1.0.3
+require (
+	github.com/go-mail/mail v2.3.1+incompatible
+	github.com/rhodeon/prettylog v1.0.3
+)
+
+require (
+	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
+	gopkg.in/mail.v2 v2.3.1 // indirect
+)
