@@ -16,6 +16,7 @@ require github.com/alexedwards/scs/mysqlstore v0.0.0-20220216073957-c252878bcf5a
 
 require (
 	github.com/go-mail/mail v2.3.1+incompatible
+	github.com/google/uuid v1.3.0
 	github.com/rhodeon/prettylog v1.0.3
 )
 

@@ -99,6 +99,26 @@ func (c *UserController) Get(id int) (models.User, error) {
 	return *user, nil
 }
 
+// GetFromEmail retrieves the user with the specified email.
+func (c *UserController) GetFromEmail(email string) (models.User, error) {
+	// retrieve user details
+	stmt := `SELECT id, username, email, created, active FROM users WHERE email = ?`
+	row := c.Db.QueryRow(stmt, email)
+
+	user := &models.User{}
+	err := row.Scan(&user.Id, &user.Username, &user.Email, &user.Created, &user.Active)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			// user not found
+			return models.User{}, models.ErrInvalidUser
+		} else {
+			return models.User{}, err
+		}
+	}
+
+	return *user, nil
+}
+
 // GetSnips retrieves the snips created by the specified user.
 func (c *UserController) GetSnips(username string) ([]models.Snip, error) {
 	stmt := `SELECT id, user, title, content, created FROM snips

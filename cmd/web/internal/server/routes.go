@@ -59,12 +59,14 @@ func (app *Application) RouteHandler() http.Handler {
 		r.Post("/signup", app.signupUserPost)
 		r.Get("/login", app.loginUserGet)
 		r.Post("/login", app.loginUserPost)
-		r.Get("/change-password", app.changePasswordGet)
-		r.Post("/change-password", app.changePasswordPost)
+		r.Get("/forgot-password", app.forgotPasswordGet)
+		r.Post("/forgot-password", app.forgotPasswordPost)
 
 		r.Group(func(r chi.Router) {
 			r.Use(app.requireAuthentication)
 			r.Post("/logout", app.logoutUser)
+			r.Get("/change-password", app.changePasswordGet)
+			r.Post("/change-password", app.changePasswordPost)
 		})
 	})
 

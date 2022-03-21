@@ -22,6 +22,7 @@ const (
 	ErrInvalidEmailOrPassword = "Email or password is incorrect"
 	ErrExistingUsername       = "Username is already taken"
 	ErrExistingEmail          = "Email already in use"
+	ErrInvalidEmail           = "Invalid email"
 	ErrIncorrectPassword      = "Incorrect password"
 	ErrMismatchedPasswords    = "Confirmation does not match"
 	ErrWhitespace             = "This field must not contain spaces"

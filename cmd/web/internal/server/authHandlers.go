@@ -3,9 +3,11 @@ package server
 import (
 	"errors"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/rhodeon/sniphub/cmd/web/internal/session"
 	"github.com/rhodeon/sniphub/cmd/web/internal/templates"
 	"github.com/rhodeon/sniphub/pkg/forms"
+	"github.com/rhodeon/sniphub/pkg/mailer"
 	"github.com/rhodeon/sniphub/pkg/models"
 	"net/http"
 )
@@ -180,4 +182,50 @@ func (app *Application) changePasswordPost(w http.ResponseWriter, r *http.Reques
 
 	app.SessionManager.Put(r.Context(), session.KeyFlashMessage, session.PasswordChanged)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (app *Application) forgotPasswordGet(w http.ResponseWriter, r *http.Request) {
+	app.renderTemplate(w, r, "forgotPassword.page.gohtml", &templates.TemplateData{Form: forms.New(nil)})
+}
+
+func (app *Application) forgotPasswordPost(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	form.Required(forms.Email)
+
+	user, err := app.Users.GetFromEmail(form.Values.Get(forms.Email))
+	if err != nil {
+		if errors.Is(err, models.ErrInvalidUser) {
+			form.Errors.Add(forms.Email, forms.ErrInvalidEmail)
+			app.renderTemplate(w, r,
+				"forgotPassword.page.gohtml",
+				&templates.TemplateData{
+					Form: form,
+				},
+			)
+		} else {
+			serverError(w, err)
+		}
+		return
+	}
+
+	data := mailer.ResetPasswordData{
+		Username:   user.Username,
+		ResetToken: uuid.New().String(),
+	}
+
+	err = app.Mailer.Send(user.Email, "./pkg/mailer/resetPassword.gotmpl", data)
+	// TODO: display attempt failure to user
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	app.SessionManager.Put(r.Context(), session.KeyFlashMessage, session.PasswordResetLinkSent)
+	http.Redirect(w, r, loginRoute, http.StatusSeeOther)
 }

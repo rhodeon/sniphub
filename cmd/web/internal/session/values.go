@@ -8,4 +8,5 @@ const (
 	SnipEdited             = "Snip edited successfully!"
 	SnipCloned             = "Snip cloned successfully!"
 	LoginPrompt            = "Login to perform this action"
+	PasswordResetLinkSent  = "A password reset link has been sent to your email"
 )
