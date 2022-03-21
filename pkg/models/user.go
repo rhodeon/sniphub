@@ -18,4 +18,5 @@ type UserController interface {
 	GetFromEmail(email string) (User, error)
 	GetSnips(username string) ([]Snip, error)
 	ChangePassword(id int, currentPassword string, newPassword string) error
+	SetPasswordResetToken(username string, token string) error
 }

@@ -214,12 +214,22 @@ func (app *Application) forgotPasswordPost(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	data := mailer.ResetPasswordData{
-		Username:   user.Username,
-		ResetToken: uuid.New().String(),
+	resetToken := uuid.New().String()
+
+	// set token in database
+	err = app.Users.SetPasswordResetToken(user.Username, resetToken)
+	if err != nil {
+		serverError(w, err)
+		return
 	}
 
-	err = app.Mailer.Send(user.Email, "./pkg/mailer/resetPassword.gotmpl", data)
+	// setup content and send email
+	emailData := mailer.ResetPasswordData{
+		Username:   user.Username,
+		ResetToken: resetToken,
+	}
+
+	err = app.Mailer.Send(user.Email, "./pkg/mailer/resetPassword.gotmpl", emailData)
 	// TODO: display attempt failure to user
 	if err != nil {
 		serverError(w, err)

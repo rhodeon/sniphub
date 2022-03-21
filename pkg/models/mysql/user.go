@@ -192,3 +192,26 @@ func (c *UserController) ChangePassword(id int, currentPassword string, newPassw
 
 	return nil
 }
+
+// SetPasswordResetToken updates the database with a password reset token of the given user
+// with a validity period of 15 minutes.
+func (c *UserController) SetPasswordResetToken(username string, token string) error {
+	// hash the token for better security
+	hashedToken, err := bcrypt.GenerateFromPassword([]byte(token), 12)
+	if err != nil {
+		return err
+	}
+
+	// update token and expiry time if user column already exists, else
+	// insert new row
+	stmt := `INSERT INTO password_reset_tokens(username, hashed_token, expires) 
+	VALUES(?, ?, UTC_TIMESTAMP + INTERVAL 1 MINUTE)
+	ON DUPLICATE KEY UPDATE hashed_token = ?, expires = UTC_TIMESTAMP + INTERVAL 1 MINUTE`
+
+	_, err = c.Db.Exec(stmt, username, hashedToken, hashedToken)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
