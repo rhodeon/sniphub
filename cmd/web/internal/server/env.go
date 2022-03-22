@@ -44,11 +44,11 @@ func (e *Env) Parse() {
 // Validate Env and returns an error if a required flag isn't set.
 func (e *Env) Validate() error {
 	if e.SmtpHost == "" {
-		return errors.New("Env: the smtpHost flag is required")
+		return errors.New("env: the smtpHost flag is required")
 	}
 
 	if e.SmtpUser == "" {
-		return errors.New("Env: the smtpUser flag is required")
+		return errors.New("env: the smtpUser flag is required")
 	}
 
 	return nil
