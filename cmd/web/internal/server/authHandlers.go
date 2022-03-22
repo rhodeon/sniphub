@@ -227,7 +227,7 @@ func (app *Application) forgotPasswordPost(w http.ResponseWriter, r *http.Reques
 	// setup content and send email
 	emailData := mailer.ResetPasswordData{
 		Username:  user.Username,
-		ResetLink: "https://localhost:4000" + resetPasswordRoute + "?user=" + user.Username + "&" + "token=" + resetToken,
+		ResetLink: app.Config.BaseUrl + resetPasswordRoute + "?user=" + user.Username + "&" + "token=" + resetToken,
 	}
 
 	err = app.Mailer.Send(user.Email, "./pkg/mailer/resetPassword.gotmpl", emailData)

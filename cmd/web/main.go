@@ -57,6 +57,7 @@ func main() {
 	sessionMailer := mailer.New(env.SmtpHost, env.SmtpPort, env.SmtpUser, env.SmtpPass)
 
 	app := server.Application{
+		Config:         env,
 		TemplateCache:  templateCache,
 		SessionManager: sessionManager,
 		Mailer:         sessionMailer,
