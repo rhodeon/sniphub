@@ -225,7 +225,7 @@ func (c *UserController) SetPasswordResetToken(username string, token string) er
 	// update token and expiry time if user column already exists, else
 	// insert new row
 	stmt := `INSERT INTO password_reset_tokens(username, hashed_token, expires) 
-	VALUES(?, ?, UTC_TIMESTAMP + INTERVAL 1 MINUTE)
+	VALUES(?, ?, UTC_TIMESTAMP + INTERVAL 15 MINUTE)
 	ON DUPLICATE KEY UPDATE hashed_token = ?, expires = UTC_TIMESTAMP + INTERVAL 15 MINUTE`
 
 	_, err = c.Db.Exec(stmt, username, hashedToken, hashedToken)
