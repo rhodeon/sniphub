@@ -1,10 +1,9 @@
 package server
 
 import (
-	"net/http"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"net/http"
 )
 
 const (
@@ -21,6 +20,7 @@ const (
 	loginRoute          = "/auth/login"
 	logoutRoute         = "/auth/logout"
 	changePasswordRoute = "/auth/change-password"
+	resetPasswordRoute  = "/auth/reset-password"
 )
 
 func (app *Application) RouteHandler() http.Handler {
@@ -61,6 +61,8 @@ func (app *Application) RouteHandler() http.Handler {
 		r.Post("/login", app.loginUserPost)
 		r.Get("/forgot-password", app.forgotPasswordGet)
 		r.Post("/forgot-password", app.forgotPasswordPost)
+		r.Get("/reset-password", app.resetPasswordGet)
+		r.Post("/reset-password", app.resetPasswordPost)
 
 		r.Group(func(r chi.Router) {
 			r.Use(app.requireAuthentication)

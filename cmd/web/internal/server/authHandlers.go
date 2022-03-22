@@ -10,6 +10,7 @@ import (
 	"github.com/rhodeon/sniphub/pkg/mailer"
 	"github.com/rhodeon/sniphub/pkg/models"
 	"net/http"
+	"net/url"
 )
 
 // signupUserGet displays the account registration form.
@@ -225,8 +226,8 @@ func (app *Application) forgotPasswordPost(w http.ResponseWriter, r *http.Reques
 
 	// setup content and send email
 	emailData := mailer.ResetPasswordData{
-		Username:   user.Username,
-		ResetToken: resetToken,
+		Username:  user.Username,
+		ResetLink: "https://localhost:4000" + resetPasswordRoute + "?user=" + user.Username + "&" + "token=" + resetToken,
 	}
 
 	err = app.Mailer.Send(user.Email, "./pkg/mailer/resetPassword.gotmpl", emailData)
@@ -237,5 +238,51 @@ func (app *Application) forgotPasswordPost(w http.ResponseWriter, r *http.Reques
 	}
 
 	app.SessionManager.Put(r.Context(), session.KeyFlashMessage, session.PasswordResetLinkSent)
+	http.Redirect(w, r, loginRoute, http.StatusSeeOther)
+}
+
+func (app *Application) resetPasswordGet(w http.ResponseWriter, r *http.Request) {
+	user := r.URL.Query().Get("user")
+	resetToken := r.URL.Query().Get("token")
+
+	err := app.Users.AuthenticatePasswordResetToken(user, resetToken)
+	if err != nil {
+		app.SessionManager.Put(r.Context(), session.KeyFlashMessage, session.InvalidPasswordResetLink)
+		http.Redirect(w, r, loginRoute, http.StatusSeeOther)
+		return
+	}
+
+	// send username as part of form for verification during reset
+	form := forms.New(url.Values{forms.Username: {user}})
+	app.renderTemplate(w, r, "resetPassword.page.gohtml", &templates.TemplateData{Form: form})
+}
+
+func (app *Application) resetPasswordPost(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	form.Required(forms.NewPassword, forms.ConfirmPassword)
+	form.MinLength(10, forms.NewPassword, forms.ConfirmPassword)
+	form.AssertPasswordConfirmation(forms.NewPassword, forms.ConfirmPassword)
+
+	if !form.Valid() {
+		app.renderTemplate(w, r, "resetPassword.page.gohtml", &templates.TemplateData{Form: form})
+		return
+	}
+
+	err = app.Users.ResetPassword(
+		form.Values.Get(forms.Username),
+		form.Values.Get(forms.NewPassword),
+	)
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	app.SessionManager.Put(r.Context(), session.KeyFlashMessage, session.PasswordReset)
 	http.Redirect(w, r, loginRoute, http.StatusSeeOther)
 }

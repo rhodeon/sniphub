@@ -16,7 +16,10 @@ type UserController interface {
 	Authenticate(email string, password string) (int, error)
 	Get(id int) (User, error)
 	GetFromEmail(email string) (User, error)
+	GetFromName(username string) (User, error)
 	GetSnips(username string) ([]Snip, error)
 	ChangePassword(id int, currentPassword string, newPassword string) error
 	SetPasswordResetToken(username string, token string) error
+	AuthenticatePasswordResetToken(username string, token string) error
+	ResetPassword(username string, newPassword string) error
 }

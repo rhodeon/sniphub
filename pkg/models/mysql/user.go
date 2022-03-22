@@ -119,6 +119,26 @@ func (c *UserController) GetFromEmail(email string) (models.User, error) {
 	return *user, nil
 }
 
+// GetFromName retrieves the user with the specified username.
+func (c *UserController) GetFromName(username string) (models.User, error) {
+	// retrieve user details
+	stmt := `SELECT id, username, email, created, active FROM users WHERE username = ?`
+	row := c.Db.QueryRow(stmt, username)
+
+	user := &models.User{}
+	err := row.Scan(&user.Id, &user.Username, &user.Email, &user.Created, &user.Active)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			// user not found
+			return models.User{}, models.ErrInvalidUser
+		} else {
+			return models.User{}, err
+		}
+	}
+
+	return *user, nil
+}
+
 // GetSnips retrieves the snips created by the specified user.
 func (c *UserController) GetSnips(username string) ([]models.Snip, error) {
 	stmt := `SELECT id, user, title, content, created FROM snips
@@ -206,9 +226,68 @@ func (c *UserController) SetPasswordResetToken(username string, token string) er
 	// insert new row
 	stmt := `INSERT INTO password_reset_tokens(username, hashed_token, expires) 
 	VALUES(?, ?, UTC_TIMESTAMP + INTERVAL 1 MINUTE)
-	ON DUPLICATE KEY UPDATE hashed_token = ?, expires = UTC_TIMESTAMP + INTERVAL 1 MINUTE`
+	ON DUPLICATE KEY UPDATE hashed_token = ?, expires = UTC_TIMESTAMP + INTERVAL 15 MINUTE`
 
 	_, err = c.Db.Exec(stmt, username, hashedToken, hashedToken)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// AuthenticatePasswordResetToken compares the given password reset token of a user against
+// the hashed token in the database.
+func (c *UserController) AuthenticatePasswordResetToken(username string, token string) error {
+	// delete expired tokens
+	stmt := `DELETE FROM password_reset_tokens WHERE expires < UTC_TIMESTAMP`
+	_, err := c.Db.Exec(stmt)
+	if err != nil {
+		return err
+	}
+
+	// retrieve hashed password token at row with specified username
+	stmt = `SELECT hashed_token FROM password_reset_tokens WHERE username = ?`
+	row := c.Db.QueryRow(stmt, username)
+
+	var hashedToken []byte
+	err = row.Scan(&hashedToken)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.ErrInvalidUser
+		} else {
+			return err
+		}
+	}
+
+	// verify reset token
+	err = bcrypt.CompareHashAndPassword(hashedToken, []byte(token))
+	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			// wrong password
+			return models.ErrInvalidCredentials
+		} else {
+			return err
+		}
+	}
+
+	// delete saved reset token
+	stmt = `DELETE FROM password_reset_tokens WHERE hashed_token = ?`
+	_, err = c.Db.Exec(stmt, hashedToken)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *UserController) ResetPassword(username string, newPassword string) error {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), 12)
+	if err != nil {
+		return err
+	}
+
+	stmt := `UPDATE users SET hashed_password = ? WHERE username = ?`
+	_, err = c.Db.Exec(stmt, hashedPassword, username)
 	if err != nil {
 		return err
 	}
