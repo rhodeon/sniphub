@@ -9,6 +9,7 @@ import (
 )
 
 type Application struct {
+	Config         Env
 	TemplateCache  map[string]*template.Template
 	SessionManager *scs.SessionManager
 	Mailer         *mailer.Mailer

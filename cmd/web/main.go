@@ -17,19 +17,19 @@ import (
 
 func main() {
 	// configure sessionFlags
-	sessionFlags := flags{}
-	sessionFlags.parse()
-	err := sessionFlags.validate()
+	env := server.Env{}
+	env.Parse()
+	err := env.Validate()
 	if err != nil {
 		prettylog.FatalError(err)
 	}
 
 	// initiate database connection
 	dbConfig := &sqlDriver.Config{
-		DBName:               sessionFlags.sqlDb,
-		User:                 sessionFlags.sqlUser,
-		Passwd:               sessionFlags.sqlPassword,
-		Addr:                 sessionFlags.sqlAddr,
+		DBName:               env.SqlDb,
+		User:                 env.SqlUser,
+		Passwd:               env.SqlPassword,
+		Addr:                 env.SqlAddr,
 		Net:                  "tcp",
 		AllowNativePasswords: true,
 		ParseTime:            true,
@@ -54,7 +54,7 @@ func main() {
 	sessionManager.Cookie.Secure = true
 	sessionManager.Cookie.SameSite = http.SameSiteStrictMode
 
-	sessionMailer := mailer.New(sessionFlags.smtpHost, sessionFlags.smtpPort, sessionFlags.smtpUser, sessionFlags.smtpPass)
+	sessionMailer := mailer.New(env.SmtpHost, env.SmtpPort, env.SmtpUser, env.SmtpPass)
 
 	app := server.Application{
 		TemplateCache:  templateCache,
@@ -70,7 +70,7 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Addr:         sessionFlags.addr,
+		Addr:         env.Addr,
 		Handler:      app.RouteHandler(),
 		TLSConfig:    tlsConfig,
 		IdleTimeout:  1 * time.Minute,
@@ -79,7 +79,7 @@ func main() {
 	}
 
 	// start server
-	prettylog.InfoF("Starting server on %s", sessionFlags.addr)
+	prettylog.InfoF("Starting server on %s", env.Addr)
 	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	prettylog.Error(err.Error())
 }
